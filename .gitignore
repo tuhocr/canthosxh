@@ -7,7 +7,7 @@ bookdown-bysh.log
 bookdown-bysh.pdf
 bookdown-bysh.tex
 _bookdown_files/
-.qmd
-.rmd
+index.qmd
+test.rmd
 .R
 canthosp/
