@@ -207,7 +207,7 @@ library(sf)
 # `https://vn2000.vn/don-vi-hanh-chinh-viet-nam`
 
 # bao gom cac tinh sau sat nhap
-cantho_v1 <- st_read("canthosp/cantho.shp")
+cantho_v1 <- st_read("/home/rp1/Documents/canthosxh/canthosp/cantho.shp")
 
 cantho_v1$ten_xa[cantho_v1$ten_xa == "Cờ Đỏ"] <- "Cờ Đỏ"
 
