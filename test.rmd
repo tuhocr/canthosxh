@@ -12,6 +12,8 @@ library(gsheet)
 df <- gsheet2tbl('docs.google.com/spreadsheets/d/1uIMAMuEyfzcfiY5XsXnz2PaKrAX9fP_NCenTpmp80XQ')
 ```
 
+aaa
+
 ```{r, echo=F}
 # Sys.Date
 cat(as.character(Sys.time()))
