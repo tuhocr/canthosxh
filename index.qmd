@@ -1,0 +1,1886 @@
+---
+title: SXH
+author: Hoang Quoc Cuong
+date: last-modified
+format:
+  html:
+    toc: true
+    toc-title: "Mục lục"
+    toc-expand: 1
+    toc-depth: 6
+    toc-location: left
+    number-sections: true
+    number-depth: 8
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+    embed-resources: true
+    anchor-sections: true
+    smooth-scroll: true
+engine: knitr
+knitr:
+  opts_chunk:
+    R.options:
+      width: 140
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, echo=FALSE, results='hide'}
+knitr::opts_chunk$set(message = FALSE,  
+                      warning = FALSE,
+                      echo = FALSE,
+                      results = 'hide')   
+```
+
+```{r}
+colorize <- function(string, color) {
+  string_colorized <- paste('<b><span style="color: ',
+                            color,
+                            '">', 
+                            string,
+                            '</span></b>',
+                            sep = "")
+  string_colorized
+}
+
+
+```
+
+<!-- ``` -->
+<!-- GEOCODING -->
+
+<!-- **SXH** -->
+
+<!-- https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=1204706650#gid=1204706650 -->
+
+<!-- **ODICH_SXH** -->
+
+<!-- https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=1416128104#gid=1416128104 -->
+
+<!-- **TCM** -->
+
+<!-- https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=880750058#gid=880750058 -->
+
+<!-- **ODICH_TCM** -->
+
+<!-- https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=136498177#gid=136498177 -->
+
+<!-- ALL -->
+
+<!-- https://docs.google.com/spreadsheets/d/1sAU_uehX6xG4ezw--5JUDHEd96x4EIuyAFOrWMPJks8/edit?usp=sharing  -->
+<!-- ``` -->
+
+<!-- # NHẬP DỮ LIỆU -->
+
+```{r}
+library(dplyr)
+library(readxl)
+library(gsheet)
+
+ df_SXH <- gsheet2tbl(url = "https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=1204706650#gid=1204706650")
+# # 
+df_SXH <- as.data.frame(df_SXH)
+# # df_SXH
+# # # 
+# saveRDS(df_SXH, "df_SXH.rds")
+
+# df_SXH <- readRDS("df_SXH.rds")
+
+# df_SXH <- df_SXH |> subset(TTYTKV != "TTYT KV Châu Thành ST")
+
+
+```
+
+<!-- # CHUẨN LẠI TÊN CỘT -->
+
+```{r}
+names(df_SXH) <- toupper(names(df_SXH))
+
+names(df_SXH) <- c("TTYTKV",
+                   "PHUONG_XA_MOI",
+                   "AP",
+                   "NGAY_VV",
+                   "HO",
+                   "TEN",
+                   "TUOI",
+                   "PHAN_DO",
+                   "GHI_CHU",
+                   "TOA_DO",
+                   "NGUOI_NHAP_LIEU",
+                   "NGAY_NHAP_LIEU")
+
+length(table(df_SXH$TTYTKV))
+```
+
+
+<!-- # KIỂM TRA DỮ LIỆU -->
+
+```{r}
+dim(df_SXH)
+# head(df_SXH)
+sapply(df_SXH, class)
+```
+
+<!-- # CHUẨN TÊN TRUNG TÂM Y TẾ -->
+
+```{r}
+simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+      sep="", collapse=" ")
+}
+
+for(i in 1:length(df_SXH$PHUONG_XA_MOI)){
+  
+  df_SXH$TTYTKV[i] <- simpleCap(df_SXH$TTYTKV[i])
+  
+}
+
+table(df_SXH$TTYTKV)
+
+df_SXH$TTYTKV[which(df_SXH$TTYTKV %in% c("TTYT TTYT KV Vĩnh Châu",
+                                         "TTYT KV Vĩnh Châu"))] <- "TTYT KV Vĩnh Châu"
+
+table(df_SXH$TTYTKV)
+```
+
+
+
+<!-- # CHUẨN TÊN PHƯỜNG XÃ -->
+
+<!-- `https://stackoverflow.com/questions/6364783/capitalize-the-first-letter-of-both-words-in-a-two-word-string` -->
+
+```{r}
+simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+      sep="", collapse=" ")
+}
+
+for(i in 1:length(df_SXH$PHUONG_XA_MOI)){
+  
+  df_SXH$PHUONG_XA_MOI[i] <- simpleCap(df_SXH$PHUONG_XA_MOI[i])
+  
+}
+```
+
+```{r}
+gsub(pattern = "P\\. ",
+     replacement = "",
+     df_SXH$PHUONG_XA_MOI) -> df_SXH$PHUONG_XA_MOI
+
+# table(check_pxm_ok)
+```
+
+
+
+
+```{r}
+table(df_SXH$PHUONG_XA_MOI)
+```
+
+```{r}
+length(unique(df_SXH$PHUONG_XA_MOI))
+```
+
+
+```{r}
+library(stringi)
+
+base <- data.frame(terme = c("Millésime", 
+                             "boulangère", 
+                             "üéâäàåçêëèïîì"))
+
+base$terme = stri_trans_general(str = base$terme, id = "Latin-ASCII")
+```
+
+
+<!-- # SHAPE FILE CẦN THƠ -->
+
+```{r}
+library(dplyr)
+library(sf)
+
+# DỮ LIỆU RANH GIỚI 34 TỈNH/THÀNH – 3.321 XÃ/PHƯỜNG
+# `https://www.facebook.com/groups/862687817624503/posts/1907685526458055/`
+# `https://vn2000.vn/don-vi-hanh-chinh-viet-nam`
+
+# bao gom cac tinh sau sat nhap
+cantho_v1 <- st_read("canthosp/cantho.shp")
+
+cantho_v1$ten_xa[cantho_v1$ten_xa == "Cờ Đỏ"] <- "Cờ Đỏ"
+
+cantho_v1$ten_xa[cantho_v1$ten_xa == "Hỏa Lựu"] <- "Hỏa Lựu"
+```
+
+```{r}
+table(cantho_v1$ten_xa)
+
+length(unique(cantho_v1$ten_xa))
+```
+
+<!-- **Các xã có bệnh nhân** -->
+
+```{r}
+setdiff(df_SXH$PHUONG_XA_MOI, cantho_v1$ten_xa)
+```
+
+```{r}
+intersect(df_SXH$PHUONG_XA_MOI, cantho_v1$ten_xa)
+
+length(intersect(df_SXH$PHUONG_XA_MOI, cantho_v1$ten_xa))
+```
+
+<!-- **Các xã không có bệnh nhân** -->
+
+```{r}
+setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI)
+
+length(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI))
+```
+
+
+<!-- # CHUẨN NGÀY THÁNG -->
+
+```{r}
+df_SXH$NGAY_VV <- as.Date(df_SXH$NGAY_VV,
+                             format = "%d/%m/%Y")
+
+
+summary(df_SXH$NGAY_VV)
+```
+
+```{r}
+df_SXH$NGAY_NHAP_LIEU <- as.Date(df_SXH$NGAY_NHAP_LIEU,
+                             format = "%d/%m/%Y")
+
+summary(df_SXH$NGAY_NHAP_LIEU)
+```
+
+<!-- # KIỂM TRA MISSING VALUE -->
+
+```{r}
+sapply(X = df_SXH, 
+        FUN = function(x){  length(which(is.na(x)))  }   )
+```
+
+<!-- # KIỂM TRA FORMAT TỔNG THỂ -->
+
+```{r}
+table(df_SXH$TTYTKV)
+```
+
+```{r}
+table(df_SXH$NGUOI_NHAP_LIEU)
+```
+
+```{r}
+gsub(pattern = "\\,",
+     replacement = "\\.",
+     df_SXH$TUOI) -> df_SXH$TUOI
+
+df_SXH$TUOI <- as.numeric(df_SXH$TUOI)
+
+table(df_SXH$TUOI)
+
+summary(df_SXH$TUOI)
+```
+
+```{r}
+update_time <- Sys.time()
+
+update_time <- as.character(update_time)
+
+update_time <- substr(x = update_time,
+                      start = 1,
+                      stop = 19)
+```
+
+
+# **DỮ LIỆU SXH**
+
+Báo cáo được cập nhập vào lúc `r colorize(update_time, "darkgreen")`
+
+Bản đồ Cần Thơ (thông tin chi tiết phường, xã mới) [**click here**](https://tuhocr.github.io/canthosxh/mapcantho.html)
+
+<!-- <https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=1204706650#gid=1204706650> -->
+
+<!-- **Chọn lọc các cột quan tâm** -->
+
+```{r}
+library(DT)
+# datatable(df_SXH[ , c(1,2,4, 5,6,7,8,9)])
+# https://quarto.org/docs/dashboards/data-display.html
+```
+
+# **TỔNG SỐ CA TRONG NĂM**
+
+```{r}
+table(df_SXH$TTYTKV,
+      df_SXH$PHUONG_XA_MOI,
+      df_SXH$NGAY_VV) -> stat_day
+
+as.data.frame(stat_day) -> stat_day_df
+
+names(stat_day_df) <- c("TTYTKV", "PHUONG_XA_MOI", "NGAY_VV", "COUNT")
+
+stat_day_df$TTYTKV <- as.character(stat_day_df$TTYTKV)
+
+stat_day_df$PHUONG_XA_MOI <- as.character(stat_day_df$PHUONG_XA_MOI)
+
+stat_day_df$NGAY_VV <- as.character(stat_day_df$NGAY_VV)
+
+stat_day_df$NGAY_VV <- as.Date(stat_day_df$NGAY_VV)
+
+stat_day_df |> dplyr:::arrange(desc(TTYTKV),
+                               desc(PHUONG_XA_MOI),
+                               desc(NGAY_VV))  -> stat_day_df_final
+```
+
+
+```{r}
+stat_day_df <- stat_day_df |> subset(COUNT != 0)
+```
+
+
+```{r}
+# table(stat_day_df$PHUONG_XA_MOI,
+#       stat_day_df$TTYTKV) -> TTYTKV_df
+# 
+# TTYTKV_df <- as.matrix(TTYTKV_df)
+# 
+# TTYTKV_df <- unclass(TTYTKV_df)
+# 
+# TTYTKV_df <- as.data.frame(TTYTKV_df)
+# 
+# names(TTYTKV_df)
+# 
+# for(j in 1:ncol(TTYTKV_df)){
+#   
+#   print(TTYTKV_df[ TTYTKV_df[j] !=0 , j, drop = F])
+#   
+# }
+
+library(dplyr)
+
+stat_day_df |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> dplyr:::arrange(TTYTKV, desc(TONG_SO_CA), PHUONG_XA_MOI) |> 
+  as.data.frame() -> total_case_day
+
+# total_case_day
+
+
+```
+
+```{r}
+time_1 <- paste0("Từ ngày ",
+    as.character(range(stat_day_df$NGAY_VV)[1]),
+    " đến ngày ",
+    as.character(range(stat_day_df$NGAY_VV)[2]))
+```
+
+
+
+
+`r colorize(time_1, "blue")`
+
+
+
+```{r}
+time_2 <- paste0("Tổng số ca: ",
+    sum(total_case_day$TONG_SO_CA),
+    " | Tổng số TTYT KV: ",
+    length(unique(total_case_day$TTYTKV)),
+    " | Tổng số phường, xã: 103")
+```
+
+
+```{r}
+time_sxh <- paste0("Tổng số phường, xã có ca SXH: ",
+    length(unique(total_case_day$PHUONG_XA_MOI)))
+```
+
+
+
+`r colorize(time_2, "red")`
+
+```{r}
+if(length(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI)) > 0){
+  
+time_3 <- paste0("Tổng số phường, xã có KHÔNG có SXH: ",
+    length(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI)),
+    paste0(" (",
+    paste0(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI),
+          collapse = ", "),
+    ")")
+    )  
+  
+ 
+}
+
+
+```
+
+
+`r  if(exists("time_sxh")){colorize(time_sxh, "red")}`
+
+`r  if(exists("time_3")){colorize(time_3, "darkgreen")}`
+
+
+```{r}
+names(total_case_day) <- c("TTYTKV", "Phường, xã mới", "Tổng số ca")
+```
+
+
+```{r, results='hold'}
+library(DT)
+
+
+# DT:::datatable(total_case_day)
+
+
+DT:::datatable(
+  total_case_day, 
+    filter = "top",
+  rownames = F,
+  extensions = 'Buttons', 
+  options = list(
+    dom = 'Blfrtip',
+    buttons = c('copy', 'excel', 'pdf'),
+    lengthMenu = list(c(-1, 10, 30), 
+                      c('All', '10', '30')),
+    paging = T)
+)
+```
+
+
+# **TỔNG SỐ CA THEO THÁNG**
+
+```{r}
+library(lubridate)
+df_SXH -> df_SXH_month_ori
+
+df_SXH_month_ori$WEEK <- lubridate:::week(df_SXH_month_ori$NGAY_VV)
+
+df_SXH_month_ori$MONTH <- lubridate:::month(df_SXH_month_ori$NGAY_VV)
+
+df_SXH_month_ori$YEAR <- lubridate:::year(df_SXH_month_ori$NGAY_VV)
+```
+
+
+
+
+```{r}
+table(df_SXH_month_ori$TTYTKV,
+      df_SXH_month_ori$PHUONG_XA_MOI,
+      df_SXH_month_ori$MONTH) -> stat_day_month_ori
+
+as.data.frame(stat_day_month_ori) -> stat_day_df_month_ori
+
+names(stat_day_df_month_ori) <- c("TTYTKV", "PHUONG_XA_MOI", "MONTH", "COUNT")
+
+stat_day_df_month_ori$TTYTKV <- as.character(stat_day_df_month_ori$TTYTKV)
+
+stat_day_df_month_ori$PHUONG_XA_MOI <- as.character(stat_day_df_month_ori$PHUONG_XA_MOI)
+
+stat_day_df_month_ori$MONTH<- as.character(stat_day_df_month_ori$MONTH)
+
+stat_day_df_month_ori$MONTH <- as.numeric(stat_day_df_month_ori$MONTH)
+
+stat_day_df_month_ori |> dplyr:::arrange(desc(TTYTKV),
+                               desc(PHUONG_XA_MOI),
+                               MONTH)  -> stat_day_df_final_month_ori
+```
+
+
+```{r}
+stat_day_df_month_ori <- stat_day_df_month_ori |> subset(COUNT != 0)
+```
+
+
+```{r}
+
+library(dplyr)
+
+stat_day_df_month_ori |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> dplyr:::arrange(TTYTKV, desc(TONG_SO_CA), PHUONG_XA_MOI) |> 
+  as.data.frame() -> total_case_day_month_ori
+
+# total_case_day
+
+
+```
+
+```{r}
+stat_day_df_month_ori -> stat_day_df_MONTH
+
+names(stat_day_df_MONTH) <- c("TTYTKV", "Phường, xã mới", "Tháng", "Tổng số ca")
+```
+
+
+
+```{r, results='hold'}
+
+library(DT)
+
+
+# DT:::datatable(total_case_day)
+
+
+DT:::datatable(
+  stat_day_df_MONTH, 
+  filter = "top",
+  rownames = F,
+  extensions = 'Buttons', 
+  options = list(
+    dom = 'Blfrtip',
+    buttons = c('copy', 'excel', 'pdf'),
+    lengthMenu = list(c(10, 30, -1), 
+                      c('10', '30', "All")),
+    paging = T)
+)
+```
+
+
+
+# **DỮ LIỆU THEO NGÀY**
+
+<!-- ## FOR LOOP TTYTKV -->
+
+```{r}
+library(ggplot2)
+
+TTYT_name <- unique(stat_day_df$TTYTKV)
+
+list_ttyt <- list()
+list_ttyt_p <- list()
+
+for(p in 1:length(TTYT_name)) {
+
+
+stat_day_df_clean <- stat_day_df |> subset(TTYTKV %in% TTYT_name[p])
+
+# table(stat_day_df_clean$TTYTKV)
+# table(stat_day_df_clean$PHUONG_XA_MOI) -> data_count
+
+stat_day_df_clean |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> as.data.frame() -> total_case_day
+
+total_case_day$TONG_SO_CA -> data_count
+
+names(data_count) <- total_case_day$PHUONG_XA_MOI
+
+PXM_name <- unique(stat_day_df_clean$PHUONG_XA_MOI)
+
+for(g in 1:length(data_count)){
+
+  stat_day_df_clean$PHUONG_XA_MOI[stat_day_df_clean$PHUONG_XA_MOI %in% names(data_count)[g]] <- paste0(stat_day_df_clean$PHUONG_XA_MOI[stat_day_df_clean$PHUONG_XA_MOI %in% names(data_count)[g]],
+                                                                                                       " (",
+                                                                                                       data_count[g],
+                                                                                                       ")")
+
+
+}
+
+stat_day_df_clean |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> as.data.frame() -> total_case_day
+
+total_case_day$TONG_SO_CA -> data_count
+
+names(data_count) <- total_case_day$PHUONG_XA_MOI
+
+stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                          levels = names(sort(data_count, decreasing = T)))
+
+###
+# stat_day_df_clean <- stat_day_df_clean |> subset(PHUONG_XA_MOI %in% c("Đại Thành (0)", "Ngã Năm (38)", "Tân Long (14)", "Mỹ Quới (20)"))
+###
+
+unique(stat_day_df_clean$TTYTKV)
+
+stat_day_df_clean -> stat_day_df_clean_ori
+
+if( length(levels(unique(stat_day_df_clean$PHUONG_XA_MOI))) == 3){
+  
+  levels(stat_day_df_clean$PHUONG_XA_MOI) -> level_ok
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- as.character(stat_day_df_clean$PHUONG_XA_MOI)
+  
+  stat_day_df_clean[1, ] -> new_id
+  
+  new_id$PHUONG_XA_MOI[1] <- "aaabbb"
+  
+  new_id$COUNT[1] <- NA
+  
+  stat_day_df_clean <- rbind(new_id, stat_day_df_clean)
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                            levels = c(level_ok, "aaabbb"))
+} else if (length(levels(unique(stat_day_df_clean$PHUONG_XA_MOI))) == 2){
+  
+  levels(stat_day_df_clean$PHUONG_XA_MOI) -> level_ok
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- as.character(stat_day_df_clean$PHUONG_XA_MOI)
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id
+  
+  new_id$PHUONG_XA_MOI[1] <- "aaabbb"
+  
+  new_id$COUNT[1] <- NA
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id2
+  
+  new_id2$PHUONG_XA_MOI[1] <- "cccddd"
+  
+  new_id2$COUNT[1] <- NA
+  
+  stat_day_df_clean <- rbind(new_id, new_id2, stat_day_df_clean)
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                            levels = c(level_ok, 
+                                                       "aaabbb",
+                                                       "cccddd"))
+  
+  
+  
+} else if (length(levels(unique(stat_day_df_clean$PHUONG_XA_MOI))) == 1){
+  
+  levels(stat_day_df_clean$PHUONG_XA_MOI) -> level_ok
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- as.character(stat_day_df_clean$PHUONG_XA_MOI)
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id
+  
+  new_id$PHUONG_XA_MOI[1] <- "aaabbb"
+  
+  new_id$COUNT[1] <- NA
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id2
+  
+  new_id2$PHUONG_XA_MOI[1] <- "cccddd"
+  
+  new_id2$COUNT[1] <- NA
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id3
+  
+  new_id3$PHUONG_XA_MOI[1] <- "eeefff"
+  
+  new_id3$COUNT[1] <- NA
+  
+  stat_day_df_clean <- rbind(new_id, new_id2, new_id3, stat_day_df_clean)
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                            levels = c(level_ok, 
+                                                       "aaabbb",
+                                                       "cccddd",
+                                                       "eeefff"))
+  
+  
+  
+}
+
+
+
+p1 <- ggplot(data = stat_day_df_clean,
+       mapping = aes(x = NGAY_VV,
+                     y = COUNT
+                     # color = PHUONG_XA_MOI,
+                     # fill = PHUONG_XA_MOI,
+                     # group = PHUONG_XA_MOI
+                     )) +
+   
+  geom_line(show.legend = F,
+            colour = "black") +
+  
+  geom_point(color = "red",
+             shape = 19,
+             # fill = "yellow",
+             alpha = 0.8,
+             size = 2,
+             show.legend = F) + 
+  
+  scale_y_continuous(limits = c(0, max(stat_day_df$COUNT)),
+                     breaks = seq(from = 0, 
+                                  to = max(stat_day_df$COUNT))) +
+  
+   scale_x_date(limits = c(min(stat_day_df$NGAY_VV), max(stat_day_df$NGAY_VV))) +
+  
+  facet_wrap(~ PHUONG_XA_MOI,
+             # switch = "both",
+             axes = "all",
+             ncol = 4
+             # axis.labels = "all_x"
+         
+             ) +
+  
+  theme_bw(base_size = 16) +
+  
+  theme(text = element_text(face = "bold", color = "black")) +
+  
+  labs(title = paste0(TTYT_name[p], " | Số ca nhập viện theo ngày\nTổng số : ",
+                      sum(stat_day_df_clean$COUNT, na.rm = T),
+                      " ca | Từ ngày ",
+                      range(stat_day_df_clean$NGAY_VV)[1],
+                      " đến ngày ",
+                      range(stat_day_df_clean$NGAY_VV)[2]),
+       x = "",
+       y = "Số ca nhập viện")
+
+b1 <- ggplot_build(p1)
+p_gtable <- ggplot_gtable(b1)
+
+p_gtable -> p_gtable_ori
+
+library(lemon)
+# lemon::gtable_show_names(p_gtable)
+### REMOVE PANEL
+
+if( length(levels(unique(stat_day_df_clean_ori$PHUONG_XA_MOI))) == 3){
+
+
+# panel4    
+p_gtable$grobs[[5]]$children[[1]] <- NULL
+p_gtable$grobs[[5]]$children[[5]] <- NULL
+# panel4 
+p_gtable$grobs[[13]]$children[[2]] <- NULL
+p_gtable$grobs[[14]]$children[[2]] <- NULL
+p_gtable$grobs[[25]]$grobs <- NULL  
+  
+list_ttyt[[p]] <- p_gtable 
+  
+  
+} else if(length(levels(unique(stat_day_df_clean_ori$PHUONG_XA_MOI))) == 2){
+  
+# panel3  
+p_gtable$grobs[[4]]$children[[1]] <- NULL
+p_gtable$grobs[[4]]$children[[5]] <- NULL 
+# panel3 
+p_gtable$grobs[[12]]$children[[2]] <- NULL
+p_gtable$grobs[[15]]$children[[2]] <- NULL
+p_gtable$grobs[[24]]$grobs <- NULL  
+
+
+# panel4    
+p_gtable$grobs[[5]]$children[[1]] <- NULL
+p_gtable$grobs[[5]]$children[[5]] <- NULL
+# panel4 
+p_gtable$grobs[[13]]$children[[2]] <- NULL
+p_gtable$grobs[[14]]$children[[2]] <- NULL
+p_gtable$grobs[[25]]$grobs <- NULL  
+  
+list_ttyt[[p]] <- p_gtable   
+  
+  
+  
+} else if(length(levels(unique(stat_day_df_clean_ori$PHUONG_XA_MOI))) == 1){
+
+# panel2  
+p_gtable$grobs[[3]]$children[[1]] <- NULL
+p_gtable$grobs[[3]]$children[[5]] <- NULL 
+# panel2 
+p_gtable$grobs[[11]]$children[[2]] <- NULL
+p_gtable$grobs[[16]]$children[[2]] <- NULL
+p_gtable$grobs[[23]]$grobs <- NULL  
+  
+  
+  
+    
+# panel3  
+p_gtable$grobs[[4]]$children[[1]] <- NULL
+p_gtable$grobs[[4]]$children[[5]] <- NULL 
+# panel3 
+p_gtable$grobs[[12]]$children[[2]] <- NULL
+p_gtable$grobs[[15]]$children[[2]] <- NULL
+p_gtable$grobs[[24]]$grobs <- NULL  
+
+
+# panel4    
+p_gtable$grobs[[5]]$children[[1]] <- NULL
+p_gtable$grobs[[5]]$children[[5]] <- NULL
+# panel4 
+p_gtable$grobs[[13]]$children[[2]] <- NULL
+p_gtable$grobs[[14]]$children[[2]] <- NULL
+p_gtable$grobs[[25]]$grobs <- NULL  
+  
+list_ttyt[[p]] <- p_gtable   
+  
+  
+  
+}else {
+
+list_ttyt[[p]] <- p_gtable_ori
+
+}
+
+list_ttyt_p[[p]] <- p1
+}
+
+
+```
+
+
+<!-- **đếm số panel trong mỗi plot** -->
+
+```{r}
+num_panel_check <- vector()
+
+for(r in 1:length(list_ttyt_p)){
+  
+out <- ggplot_build(list_ttyt_p[[r]])
+
+num_panel <- length(levels(out$data[[1]]$PANEL)) 
+  
+num_panel_check <- append(num_panel_check, num_panel)
+
+}
+```
+
+
+
+``` {r, echo=FALSE, results='asis'}
+for(r in 1:length(num_panel_check)){
+
+len <- NA
+
+if(num_panel_check[r] <= 4){
+
+  len <- 3.7
+
+} else if (num_panel_check[r] > 4 & num_panel_check[r] <= 8){
+
+  len <- 6.4
+
+} else {len <- 9}
+
+
+ops <- paste0('```{r, fig.width = 10, fig.height = ',
+              len,
+              '}\n')
+
+plot_dyn <- paste0('
+grid::grid.newpage()
+grid::grid.draw(list_ttyt[[', r, ']])\n')
+
+title_sec <- paste0('## ', TTYT_name[r],"\n")
+
+dyn = c(
+  title_sec,
+    ops,
+    
+    plot_dyn,
+    '```')
+
+# cat(dyn)
+
+ok <- knitr::knit_child(text = dyn,
+  envir = environment(),
+  quiet = TRUE)
+
+cat(unlist(ok),sep="\n")
+
+
+
+
+}
+```
+
+
+
+```{r}
+
+```
+
+
+
+<!-- `https://stackoverflow.com/questions/15365829/dynamic-height-and-width-for-knitr-plots` -->
+
+<!-- `https://stackoverflow.com/questions/61346939/how-can-i-programmatically-tell-how-many-facets-a-ggplot-has` -->
+
+<!-- https://yihui.org/knitr/options/ -->
+
+<!-- https://blog.djnavarro.net/posts/2023-12-30_knitr-hooks/ -->
+
+
+# **DỮ LIỆU THEO TUẦN**
+
+<!-- **BỔ SUNG THÊM CÁC CỘT TUẦN, THÁNG, NĂM** -->
+
+
+```{r}
+library(lubridate)
+df_SXH$WEEK <- lubridate:::week(df_SXH$NGAY_VV)
+
+df_SXH$MONTH <- lubridate:::month(df_SXH$NGAY_VV)
+
+df_SXH$YEAR <- lubridate:::year(df_SXH$NGAY_VV)
+```
+
+
+
+
+```{r}
+table(df_SXH$TTYTKV,
+      df_SXH$PHUONG_XA_MOI,
+      df_SXH$WEEK) -> stat_day
+
+as.data.frame(stat_day) -> stat_day_df
+
+names(stat_day_df) <- c("TTYTKV", "PHUONG_XA_MOI", "WEEK", "COUNT")
+
+stat_day_df$TTYTKV <- as.character(stat_day_df$TTYTKV)
+
+stat_day_df$PHUONG_XA_MOI <- as.character(stat_day_df$PHUONG_XA_MOI)
+
+stat_day_df$WEEK <- as.character(stat_day_df$WEEK)
+
+stat_day_df$WEEK <- as.numeric(stat_day_df$WEEK)
+
+stat_day_df |> dplyr:::arrange(desc(TTYTKV),
+                               desc(PHUONG_XA_MOI),
+                               WEEK)  -> stat_day_df_final
+```
+
+
+```{r}
+stat_day_df <- stat_day_df |> subset(COUNT != 0)
+```
+
+
+```{r}
+# table(stat_day_df$PHUONG_XA_MOI,
+#       stat_day_df$TTYTKV) -> TTYTKV_df
+# 
+# TTYTKV_df <- as.matrix(TTYTKV_df)
+# 
+# TTYTKV_df <- unclass(TTYTKV_df)
+# 
+# TTYTKV_df <- as.data.frame(TTYTKV_df)
+# 
+# names(TTYTKV_df)
+# 
+# for(j in 1:ncol(TTYTKV_df)){
+#   
+#   print(TTYTKV_df[ TTYTKV_df[j] !=0 , j, drop = F])
+#   
+# }
+
+library(dplyr)
+
+stat_day_df |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> dplyr:::arrange(TTYTKV, desc(TONG_SO_CA), PHUONG_XA_MOI) |> 
+  as.data.frame() -> total_case_day
+
+# total_case_day
+
+
+```
+
+```{r, results='hold'}
+# cat("Từ tuần ",
+#     as.character(range(stat_day_df$WEEK)[1]),
+#     " đến tuần ",
+#     as.character(range(stat_day_df$WEEK)[2]))
+```
+
+```{r, results='hold'}
+# cat("Tổng số ca:",
+#     sum(total_case_day$TONG_SO_CA),
+#     " | Tổng số TTYT KV:",
+#     length(unique(total_case_day$TTYTKV)),
+#     " | Tổng số phường, xã:",
+#     length(unique(total_case_day$PHUONG_XA_MOI)))
+```
+
+```{r}
+names(total_case_day) <- c("TTYTKV", "Phường, xã mới", "Tổng số ca")
+```
+
+
+```{r, results='hold'}
+# total_case_day
+```
+
+<!-- ## FOR LOOP TTYTKV -->
+
+```{r}
+library(ggplot2)
+
+TTYT_name <- unique(stat_day_df$TTYTKV)
+
+list_ttyt <- list()
+list_ttyt_p <- list()
+
+for(p in 1:length(TTYT_name)) {
+
+
+stat_day_df_clean <- stat_day_df |> subset(TTYTKV %in% TTYT_name[p])
+
+# table(stat_day_df_clean$TTYTKV)
+# table(stat_day_df_clean$PHUONG_XA_MOI) -> data_count
+
+stat_day_df_clean |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> as.data.frame() -> total_case_day
+
+total_case_day$TONG_SO_CA -> data_count
+
+names(data_count) <- total_case_day$PHUONG_XA_MOI
+
+PXM_name <- unique(stat_day_df_clean$PHUONG_XA_MOI)
+
+for(g in 1:length(data_count)){
+
+  stat_day_df_clean$PHUONG_XA_MOI[stat_day_df_clean$PHUONG_XA_MOI %in% names(data_count)[g]] <- paste0(stat_day_df_clean$PHUONG_XA_MOI[stat_day_df_clean$PHUONG_XA_MOI %in% names(data_count)[g]],
+                                                                                                       " (",
+                                                                                                       data_count[g],
+                                                                                                       ")")
+
+
+}
+
+stat_day_df_clean |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> as.data.frame() -> total_case_day
+
+total_case_day$TONG_SO_CA -> data_count
+
+names(data_count) <- total_case_day$PHUONG_XA_MOI
+
+stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                          levels = names(sort(data_count, decreasing = T)))
+
+###
+# stat_day_df_clean <- stat_day_df_clean |> subset(PHUONG_XA_MOI %in% c("Đại Thành (0)", "Ngã Năm (38)", "Tân Long (14)", "Mỹ Quới (20)"))
+###
+
+unique(stat_day_df_clean$TTYTKV)
+
+stat_day_df_clean -> stat_day_df_clean_ori
+
+if( length(levels(unique(stat_day_df_clean$PHUONG_XA_MOI))) == 3){
+  
+  levels(stat_day_df_clean$PHUONG_XA_MOI) -> level_ok
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- as.character(stat_day_df_clean$PHUONG_XA_MOI)
+  
+  stat_day_df_clean[1, ] -> new_id
+  
+  new_id$PHUONG_XA_MOI[1] <- "aaabbb"
+  
+  new_id$COUNT[1] <- NA
+  
+  stat_day_df_clean <- rbind(new_id, stat_day_df_clean)
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                            levels = c(level_ok, "aaabbb"))
+} else if (length(levels(unique(stat_day_df_clean$PHUONG_XA_MOI))) == 2){
+  
+  levels(stat_day_df_clean$PHUONG_XA_MOI) -> level_ok
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- as.character(stat_day_df_clean$PHUONG_XA_MOI)
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id
+  
+  new_id$PHUONG_XA_MOI[1] <- "aaabbb"
+  
+  new_id$COUNT[1] <- NA
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id2
+  
+  new_id2$PHUONG_XA_MOI[1] <- "cccddd"
+  
+  new_id2$COUNT[1] <- NA
+  
+  stat_day_df_clean <- rbind(new_id, new_id2, stat_day_df_clean)
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                            levels = c(level_ok, 
+                                                       "aaabbb",
+                                                       "cccddd"))
+  
+  
+  
+} else if (length(levels(unique(stat_day_df_clean$PHUONG_XA_MOI))) == 1){
+  
+  levels(stat_day_df_clean$PHUONG_XA_MOI) -> level_ok
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- as.character(stat_day_df_clean$PHUONG_XA_MOI)
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id
+  
+  new_id$PHUONG_XA_MOI[1] <- "aaabbb"
+  
+  new_id$COUNT[1] <- NA
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id2
+  
+  new_id2$PHUONG_XA_MOI[1] <- "cccddd"
+  
+  new_id2$COUNT[1] <- NA
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id3
+  
+  new_id3$PHUONG_XA_MOI[1] <- "eeefff"
+  
+  new_id3$COUNT[1] <- NA
+  
+  stat_day_df_clean <- rbind(new_id, new_id2, new_id3, stat_day_df_clean)
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                            levels = c(level_ok, 
+                                                       "aaabbb",
+                                                       "cccddd",
+                                                       "eeefff"))
+  
+  
+  
+}
+
+
+
+p1 <- ggplot(data = stat_day_df_clean,
+       mapping = aes(x = WEEK,
+                     y = COUNT
+                     # color = PHUONG_XA_MOI,
+                     # fill = PHUONG_XA_MOI,
+                     # group = PHUONG_XA_MOI
+                     )) +
+   
+  geom_col(show.legend = F,
+            colour = "black",
+           fill = "coral") +
+  
+  # geom_point(color = "red",
+  #            shape = 19,
+  #            # fill = "yellow",
+  #            alpha = 0.8,
+  #            size = 2,
+  #            show.legend = F) + 
+  
+  scale_y_continuous(limits = c(0, max(stat_day_df$COUNT)),
+                     breaks = seq(from = 0, 
+                                  to = max(stat_day_df$COUNT),
+                                  by = 3)) +
+  
+   scale_x_continuous(limits = c(min(stat_day_df$WEEK)-1, max(stat_day_df$WEEK) +1)) +
+  
+  facet_wrap(~ PHUONG_XA_MOI,
+             # switch = "both",
+             axes = "all",
+             ncol = 4
+             # axis.labels = "all_x"
+         
+             ) +
+  
+  theme_bw(base_size = 16) +
+  
+  theme(text = element_text(face = "bold", color = "black")) +
+  
+  labs(title = paste0(TTYT_name[p], " | Số ca nhập viện theo ngày\nTổng số : ",
+                      sum(stat_day_df_clean$COUNT, na.rm = T),
+                      " ca | Từ tuần ",
+                      range(stat_day_df_clean$WEEK)[1],
+                      " đến tuần ",
+                      range(stat_day_df_clean$WEEK)[2]),
+       x = "",
+       y = "Số ca nhập viện") 
+  
+  # geom_text(mapping=aes(x = WEEK,
+  #                    y = COUNT,
+  #                    label = COUNT),
+  #           vjust = -1)
+# p1
+b1 <- ggplot_build(p1)
+p_gtable <- ggplot_gtable(b1)
+
+p_gtable -> p_gtable_ori
+
+library(lemon)
+# lemon::gtable_show_names(p_gtable)
+
+# grid::grid.newpage()
+# grid::grid.draw(p_gtable)
+### REMOVE PANEL
+
+if( length(levels(unique(stat_day_df_clean_ori$PHUONG_XA_MOI))) == 3){
+
+
+# panel4    
+p_gtable$grobs[[5]]$children[[1]] <- NULL
+p_gtable$grobs[[5]]$children[[4]] <- NULL
+# panel4 
+p_gtable$grobs[[13]]$children[[2]] <- NULL
+p_gtable$grobs[[14]]$children[[2]] <- NULL
+p_gtable$grobs[[25]]$grobs <- NULL  
+  
+list_ttyt[[p]] <- p_gtable 
+  
+  
+} else if(length(levels(unique(stat_day_df_clean_ori$PHUONG_XA_MOI))) == 2){
+  
+# panel3  
+p_gtable$grobs[[4]]$children[[1]] <- NULL
+p_gtable$grobs[[4]]$children[[4]] <- NULL 
+# panel3 
+p_gtable$grobs[[12]]$children[[2]] <- NULL
+p_gtable$grobs[[15]]$children[[2]] <- NULL
+p_gtable$grobs[[24]]$grobs <- NULL  
+
+
+# panel4    
+p_gtable$grobs[[5]]$children[[1]] <- NULL
+p_gtable$grobs[[5]]$children[[4]] <- NULL
+# panel4 
+p_gtable$grobs[[13]]$children[[2]] <- NULL
+p_gtable$grobs[[14]]$children[[2]] <- NULL
+p_gtable$grobs[[25]]$grobs <- NULL  
+  
+list_ttyt[[p]] <- p_gtable   
+  
+  
+  
+} else if(length(levels(unique(stat_day_df_clean_ori$PHUONG_XA_MOI))) == 1){
+
+# panel2  
+p_gtable$grobs[[3]]$children[[1]] <- NULL
+p_gtable$grobs[[3]]$children[[4]] <- NULL 
+# panel2 
+p_gtable$grobs[[11]]$children[[2]] <- NULL
+p_gtable$grobs[[16]]$children[[2]] <- NULL
+p_gtable$grobs[[23]]$grobs <- NULL  
+  
+  
+  
+    
+# panel3  
+p_gtable$grobs[[4]]$children[[1]] <- NULL
+p_gtable$grobs[[4]]$children[[4]] <- NULL 
+# panel3 
+p_gtable$grobs[[12]]$children[[2]] <- NULL
+p_gtable$grobs[[15]]$children[[2]] <- NULL
+p_gtable$grobs[[24]]$grobs <- NULL  
+
+
+# panel4    
+p_gtable$grobs[[5]]$children[[1]] <- NULL
+p_gtable$grobs[[5]]$children[[4]] <- NULL
+# panel4 
+p_gtable$grobs[[13]]$children[[2]] <- NULL
+p_gtable$grobs[[14]]$children[[2]] <- NULL
+p_gtable$grobs[[25]]$grobs <- NULL  
+  
+list_ttyt[[p]] <- p_gtable   
+  
+  
+  
+}else {
+
+list_ttyt[[p]] <- p_gtable_ori
+
+}
+
+list_ttyt_p[[p]] <- p1
+}
+
+
+```
+
+
+<!-- **đếm số panel trong mỗi plot** -->
+
+```{r}
+num_panel_check <- vector()
+
+for(r in 1:length(list_ttyt_p)){
+  
+out <- ggplot_build(list_ttyt_p[[r]])
+
+num_panel <- length(levels(out$data[[1]]$PANEL)) 
+  
+num_panel_check <- append(num_panel_check, num_panel)
+
+}
+```
+
+
+
+``` {r, echo=FALSE, results='asis'}
+for(r in 1:length(num_panel_check)){
+
+len <- NA
+
+if(num_panel_check[r] <= 4){
+
+  len <- 3.7
+
+} else if (num_panel_check[r] > 4 & num_panel_check[r] <= 8){
+
+  len <- 6.4
+
+} else {len <- 9}
+
+
+ops <- paste0('```{r, fig.width = 10, fig.height = ',
+              len,
+              '}\n')
+
+plot_dyn <- paste0('
+grid::grid.newpage()
+grid::grid.draw(list_ttyt[[', r, ']])\n')
+
+title_sec <- paste0('## ', TTYT_name[r],"\n")
+
+dyn = c(
+  title_sec,
+    ops,
+    
+    plot_dyn,
+    '```')
+
+# cat(dyn)
+
+ok <- knitr::knit_child(text = dyn,
+  envir = environment(),
+  quiet = TRUE)
+
+cat(unlist(ok),sep="\n")
+
+
+
+
+}
+```
+
+
+
+
+<!-- # **DỮ LIỆU THEO THÁNG** -->
+
+<!-- **BỔ SUNG THÊM CÁC CỘT TUẦN, THÁNG, NĂM** -->
+
+
+```{r}
+library(lubridate)
+df_SXH$WEEK <- lubridate:::week(df_SXH$NGAY_VV)
+
+df_SXH$MONTH <- lubridate:::month(df_SXH$NGAY_VV)
+
+df_SXH$YEAR <- lubridate:::year(df_SXH$NGAY_VV)
+```
+
+
+
+
+```{r}
+table(df_SXH$TTYTKV,
+      df_SXH$PHUONG_XA_MOI,
+      df_SXH$MONTH) -> stat_day
+
+as.data.frame(stat_day) -> stat_day_df
+
+names(stat_day_df) <- c("TTYTKV", "PHUONG_XA_MOI", "MONTH", "COUNT")
+
+stat_day_df$TTYTKV <- as.character(stat_day_df$TTYTKV)
+
+stat_day_df$PHUONG_XA_MOI <- as.character(stat_day_df$PHUONG_XA_MOI)
+
+stat_day_df$MONTH<- as.character(stat_day_df$MONTH)
+
+stat_day_df$MONTH <- as.numeric(stat_day_df$MONTH)
+
+stat_day_df |> dplyr:::arrange(desc(TTYTKV),
+                               desc(PHUONG_XA_MOI),
+                               MONTH)  -> stat_day_df_final
+```
+
+
+```{r}
+stat_day_df <- stat_day_df |> subset(COUNT != 0)
+```
+
+
+```{r}
+# table(stat_day_df$PHUONG_XA_MOI,
+#       stat_day_df$TTYTKV) -> TTYTKV_df
+# 
+# TTYTKV_df <- as.matrix(TTYTKV_df)
+# 
+# TTYTKV_df <- unclass(TTYTKV_df)
+# 
+# TTYTKV_df <- as.data.frame(TTYTKV_df)
+# 
+# names(TTYTKV_df)
+# 
+# for(j in 1:ncol(TTYTKV_df)){
+#   
+#   print(TTYTKV_df[ TTYTKV_df[j] !=0 , j, drop = F])
+#   
+# }
+
+library(dplyr)
+
+stat_day_df |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> dplyr:::arrange(TTYTKV, desc(TONG_SO_CA), PHUONG_XA_MOI) |> 
+  as.data.frame() -> total_case_day
+
+# total_case_day
+
+
+```
+
+```{r}
+stat_day_df -> stat_day_df_MONTH
+
+names(stat_day_df_MONTH) <- c("TTYTKV", "Phường, xã mới", "Tháng", "Tổng số ca")
+```
+
+<!-- # **TỔNG SỐ CA THEO THÁNG** -->
+
+```{r}
+# library(DT)
+# 
+# 
+# # DT:::datatable(total_case_day)
+# 
+# 
+# DT:::datatable(
+#   stat_day_df_MONTH, 
+#   filter = "top",
+#   rownames = F,
+#   extensions = 'Buttons', 
+#   options = list(
+#     dom = 'Blfrtip',
+#     buttons = c('copy', 'excel', 'pdf'),
+#     lengthMenu = list(c(10, 30, -1), 
+#                       c('10', '30', "All")),
+#     paging = T)
+# )
+```
+
+```{r, results='hold'}
+# cat("Từ tuần ",
+#     as.character(range(stat_day_df$WEEK)[1]),
+#     " đến tuần ",
+#     as.character(range(stat_day_df$WEEK)[2]))
+```
+
+```{r, results='hold'}
+# cat("Tổng số ca:",
+#     sum(total_case_day$TONG_SO_CA),
+#     " | Tổng số TTYT KV:",
+#     length(unique(total_case_day$TTYTKV)),
+#     " | Tổng số phường, xã:",
+#     length(unique(total_case_day$PHUONG_XA_MOI)))
+```
+
+```{r}
+names(total_case_day) <- c("TTYTKV", "Phường, xã mới", "Tổng số ca")
+```
+
+# **DỮ LIỆU THEO THÁNG**
+
+```{r, results='hold'}
+# total_case_day
+```
+
+<!-- ## FOR LOOP TTYTKV -->
+
+```{r}
+library(ggplot2)
+
+TTYT_name <- unique(stat_day_df$TTYTKV)
+
+list_ttyt <- list()
+list_ttyt_p <- list()
+
+for(p in 1:length(TTYT_name)) {
+
+
+stat_day_df_clean <- stat_day_df |> subset(TTYTKV %in% TTYT_name[p])
+
+# table(stat_day_df_clean$TTYTKV)
+# table(stat_day_df_clean$PHUONG_XA_MOI) -> data_count
+
+stat_day_df_clean |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> as.data.frame() -> total_case_day
+
+total_case_day$TONG_SO_CA -> data_count
+
+names(data_count) <- total_case_day$PHUONG_XA_MOI
+
+PXM_name <- unique(stat_day_df_clean$PHUONG_XA_MOI)
+
+for(g in 1:length(data_count)){
+
+  stat_day_df_clean$PHUONG_XA_MOI[stat_day_df_clean$PHUONG_XA_MOI %in% names(data_count)[g]] <- paste0(stat_day_df_clean$PHUONG_XA_MOI[stat_day_df_clean$PHUONG_XA_MOI %in% names(data_count)[g]],
+                                                                                                       " (",
+                                                                                                       data_count[g],
+                                                                                                       ")")
+
+
+}
+
+stat_day_df_clean |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |> 
+  dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> as.data.frame() -> total_case_day
+
+total_case_day$TONG_SO_CA -> data_count
+
+names(data_count) <- total_case_day$PHUONG_XA_MOI
+
+stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                          levels = names(sort(data_count, decreasing = T)))
+
+###
+# stat_day_df_clean <- stat_day_df_clean |> subset(PHUONG_XA_MOI %in% c("Đại Thành (0)", "Ngã Năm (38)", "Tân Long (14)", "Mỹ Quới (20)"))
+###
+
+unique(stat_day_df_clean$TTYTKV)
+
+stat_day_df_clean -> stat_day_df_clean_ori
+
+if( length(levels(unique(stat_day_df_clean$PHUONG_XA_MOI))) == 3){
+  
+  levels(stat_day_df_clean$PHUONG_XA_MOI) -> level_ok
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- as.character(stat_day_df_clean$PHUONG_XA_MOI)
+  
+  stat_day_df_clean[1, ] -> new_id
+  
+  new_id$PHUONG_XA_MOI[1] <- "aaabbb"
+  
+  new_id$COUNT[1] <- NA
+  
+  stat_day_df_clean <- rbind(new_id, stat_day_df_clean)
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                            levels = c(level_ok, "aaabbb"))
+} else if (length(levels(unique(stat_day_df_clean$PHUONG_XA_MOI))) == 2){
+  
+  levels(stat_day_df_clean$PHUONG_XA_MOI) -> level_ok
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- as.character(stat_day_df_clean$PHUONG_XA_MOI)
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id
+  
+  new_id$PHUONG_XA_MOI[1] <- "aaabbb"
+  
+  new_id$COUNT[1] <- NA
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id2
+  
+  new_id2$PHUONG_XA_MOI[1] <- "cccddd"
+  
+  new_id2$COUNT[1] <- NA
+  
+  stat_day_df_clean <- rbind(new_id, new_id2, stat_day_df_clean)
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                            levels = c(level_ok, 
+                                                       "aaabbb",
+                                                       "cccddd"))
+  
+  
+  
+} else if (length(levels(unique(stat_day_df_clean$PHUONG_XA_MOI))) == 1){
+  
+  levels(stat_day_df_clean$PHUONG_XA_MOI) -> level_ok
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- as.character(stat_day_df_clean$PHUONG_XA_MOI)
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id
+  
+  new_id$PHUONG_XA_MOI[1] <- "aaabbb"
+  
+  new_id$COUNT[1] <- NA
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id2
+  
+  new_id2$PHUONG_XA_MOI[1] <- "cccddd"
+  
+  new_id2$COUNT[1] <- NA
+  
+  ###
+  stat_day_df_clean[1, ] -> new_id3
+  
+  new_id3$PHUONG_XA_MOI[1] <- "eeefff"
+  
+  new_id3$COUNT[1] <- NA
+  
+  stat_day_df_clean <- rbind(new_id, new_id2, new_id3, stat_day_df_clean)
+  
+  stat_day_df_clean$PHUONG_XA_MOI <- factor(stat_day_df_clean$PHUONG_XA_MOI,
+                                            levels = c(level_ok, 
+                                                       "aaabbb",
+                                                       "cccddd",
+                                                       "eeefff"))
+  
+  
+  
+}
+
+
+
+p1 <- ggplot(data = stat_day_df_clean,
+       mapping = aes(x = MONTH,
+                     y = COUNT
+                     # color = PHUONG_XA_MOI,
+                     # fill = PHUONG_XA_MOI,
+                     # group = PHUONG_XA_MOI
+                     )) +
+   
+  geom_col(show.legend = F,
+            colour = "black",
+           fill = "coral",
+           width = 0.7) +
+  
+  geom_text(show.legend = F,
+            colour = "blue",
+            mapping = aes(label = COUNT),
+            vjust = -1,
+            size = 3) +
+  
+  # geom_point(color = "red",
+  #            shape = 19,
+  #            # fill = "yellow",
+  #            alpha = 0.8,
+  #            size = 2,
+  #            show.legend = F) + 
+  
+  scale_y_continuous(limits = c(0, max(stat_day_df$COUNT)*1.2),
+                     breaks = seq(from = 0, 
+                                  to = max(stat_day_df$COUNT)*1.2,
+                                  by = 5)) +
+  
+   scale_x_continuous(limits = c(0.5, 12.5),
+                      breaks = 1:12) +
+  
+  facet_wrap(~ PHUONG_XA_MOI,
+             # switch = "both",
+             axes = "all",
+             ncol = 4
+             # axis.labels = "all_x"
+         
+             ) +
+  
+  theme_bw(base_size = 16) +
+  
+  theme(text = element_text(face = "bold", color = "black")) +
+  
+  theme(axis.text.y = element_text(size = 10)) +
+  
+   theme(axis.text.x = element_text(size = 9)) +
+  
+  labs(title = paste0(TTYT_name[p], " | Số ca nhập viện theo ngày\nTổng số : ",
+                      sum(stat_day_df_clean$COUNT, na.rm = T),
+                      " ca | Từ tháng ",
+                      range(stat_day_df_clean$MONTH)[1],
+                      " đến tháng ",
+                      range(stat_day_df_clean$MONTH)[2]),
+       x = "",
+       y = "Số ca nhập viện") 
+  
+  # geom_text(mapping=aes(x = MONTH,
+  #                    y = COUNT,
+  #                    label = COUNT),
+  #           vjust = -1)
+# p1
+b1 <- ggplot_build(p1)
+p_gtable <- ggplot_gtable(b1)
+
+p_gtable -> p_gtable_ori
+
+library(lemon)
+# lemon::gtable_show_names(p_gtable)
+
+# grid::grid.newpage()
+# grid::grid.draw(p_gtable)
+### REMOVE PANEL
+
+if( length(levels(unique(stat_day_df_clean_ori$PHUONG_XA_MOI))) == 3){
+
+
+# panel4    
+p_gtable$grobs[[5]]$children[[1]] <- NULL
+# p_gtable$grobs[[5]]$children[[4]] <- NULL
+p_gtable$grobs[[5]]$children[[5]] <- NULL
+# p_gtable$grobs[[5]]$children[[6]] <- NULL
+# panel4 
+p_gtable$grobs[[13]]$children[[2]] <- NULL
+p_gtable$grobs[[14]]$children[[2]] <- NULL
+p_gtable$grobs[[25]]$grobs <- NULL  
+
+  
+list_ttyt[[p]] <- p_gtable 
+  
+  
+} else if(length(levels(unique(stat_day_df_clean_ori$PHUONG_XA_MOI))) == 2){
+  
+# panel3  
+p_gtable$grobs[[4]]$children[[1]] <- NULL
+# p_gtable$grobs[[4]]$children[[4]] <- NULL 
+p_gtable$grobs[[4]]$children[[5]] <- NULL
+# p_gtable$grobs[[4]]$children[[6]] <- NULL 
+# panel3 
+p_gtable$grobs[[12]]$children[[2]] <- NULL
+p_gtable$grobs[[15]]$children[[2]] <- NULL
+p_gtable$grobs[[24]]$grobs <- NULL  
+
+
+# panel4    
+p_gtable$grobs[[5]]$children[[1]] <- NULL
+# p_gtable$grobs[[5]]$children[[4]] <- NULL
+p_gtable$grobs[[5]]$children[[5]] <- NULL
+# p_gtable$grobs[[5]]$children[[6]] <- NULL
+# panel4 
+p_gtable$grobs[[13]]$children[[2]] <- NULL
+p_gtable$grobs[[14]]$children[[2]] <- NULL
+p_gtable$grobs[[25]]$grobs <- NULL  
+  
+list_ttyt[[p]] <- p_gtable   
+  
+  
+  
+} else if(length(levels(unique(stat_day_df_clean_ori$PHUONG_XA_MOI))) == 1){
+
+# panel2  
+p_gtable$grobs[[3]]$children[[1]] <- NULL
+# p_gtable$grobs[[3]]$children[[4]] <- NULL 
+p_gtable$grobs[[3]]$children[[5]] <- NULL
+# p_gtable$grobs[[3]]$children[[6]] <- NULL 
+# panel2 
+p_gtable$grobs[[11]]$children[[2]] <- NULL
+p_gtable$grobs[[16]]$children[[2]] <- NULL
+p_gtable$grobs[[23]]$grobs <- NULL  
+  
+  
+  
+    
+# panel3  
+p_gtable$grobs[[4]]$children[[1]] <- NULL
+# p_gtable$grobs[[4]]$children[[4]] <- NULL 
+p_gtable$grobs[[4]]$children[[5]] <- NULL
+# p_gtable$grobs[[4]]$children[[6]] <- NULL 
+# panel3 
+p_gtable$grobs[[12]]$children[[2]] <- NULL
+p_gtable$grobs[[15]]$children[[2]] <- NULL
+p_gtable$grobs[[24]]$grobs <- NULL  
+
+
+# panel4    
+p_gtable$grobs[[5]]$children[[1]] <- NULL
+# p_gtable$grobs[[5]]$children[[4]] <- NULL
+p_gtable$grobs[[5]]$children[[5]] <- NULL
+# p_gtable$grobs[[5]]$children[[6]] <- NULL
+# panel4 
+p_gtable$grobs[[13]]$children[[2]] <- NULL
+p_gtable$grobs[[14]]$children[[2]] <- NULL
+p_gtable$grobs[[25]]$grobs <- NULL  
+  
+list_ttyt[[p]] <- p_gtable   
+  
+  
+  
+}else {
+
+list_ttyt[[p]] <- p_gtable_ori
+
+}
+
+list_ttyt_p[[p]] <- p1
+}
+
+
+```
+
+
+<!-- **đếm số panel trong mỗi plot** -->
+
+```{r}
+num_panel_check <- vector()
+
+for(r in 1:length(list_ttyt_p)){
+  
+out <- ggplot_build(list_ttyt_p[[r]])
+
+num_panel <- length(levels(out$data[[1]]$PANEL)) 
+  
+num_panel_check <- append(num_panel_check, num_panel)
+
+}
+```
+
+
+
+``` {r, echo=FALSE, results='asis'}
+for(r in 1:length(num_panel_check)){
+
+len <- NA
+
+if(num_panel_check[r] <= 4){
+
+  len <- 3.7
+
+} else if (num_panel_check[r] > 4 & num_panel_check[r] <= 8){
+
+  len <- 6.4
+
+} else {len <- 9}
+
+
+ops <- paste0('```{r, fig.width = 10, fig.height = ',
+              len,
+              '}\n')
+
+plot_dyn <- paste0('
+grid::grid.newpage()
+grid::grid.draw(list_ttyt[[', r, ']])\n')
+
+title_sec <- paste0('## ', TTYT_name[r],"\n")
+
+dyn = c(
+  title_sec,
+    ops,
+    
+    plot_dyn,
+    '```')
+
+# cat(dyn)
+
+ok <- knitr::knit_child(text = dyn,
+  envir = environment(),
+  quiet = TRUE)
+
+cat(unlist(ok),sep="\n")
+
+
+
+
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
