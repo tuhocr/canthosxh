@@ -1,0 +1,24 @@
+---
+title: "test"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+<https://docs.google.com/spreadsheets/d/1uIMAMuEyfzcfiY5XsXnz2PaKrAX9fP_NCenTpmp80XQ/>
+
+```{r, echo=F, results='hide', message=FALSE, warning=FALSE}
+library(gsheet)
+df <- gsheet2tbl('docs.google.com/spreadsheets/d/1uIMAMuEyfzcfiY5XsXnz2PaKrAX9fP_NCenTpmp80XQ')
+```
+
+```{r, echo=F}
+# Sys.Date
+cat(as.character(Sys.time()))
+df
+```
+
+```{r}
+
+```
+
