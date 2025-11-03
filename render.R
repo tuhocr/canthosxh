@@ -1,13 +1,13 @@
 library(rmarkdown)
 
 
-repeat{
+# repeat{
+# 
+#   rmarkdown:::render("/home/rp1/Documents/canthosxh/test.rmd")
+# 
+#   Sys.sleep(30)
+# 
+# }
 
-  rmarkdown:::render("/home/rp1/Documents/canthosxh/test.rmd")
 
-  Sys.sleep(30)
-
-}
-
-
-# system('/home/rp1/Documents/.sh')
+system('/home/rp1/Documents/autocommit.sh')
