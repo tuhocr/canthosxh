@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+bookdown-bysh.Rmd
+bookdown-bysh.log
+bookdown-bysh.pdf
+bookdown-bysh.tex
+_bookdown_files/
+.qmd
+.rmd
+.R
+canthosp/
