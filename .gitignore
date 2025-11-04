@@ -8,6 +8,8 @@ bookdown-bysh.pdf
 bookdown-bysh.tex
 _bookdown_files/
 index.qmd
+index.rmarkdown
+render.R
 test.rmd
 .R
 canthosp/
