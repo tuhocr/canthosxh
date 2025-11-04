@@ -1,9 +1,10 @@
 library(rmarkdown)
+library(quarto)
 
 
 repeat{
 
-  rmarkdown:::render("/home/rp1/Documents/canthosxh/test.rmd")
+  quarto:::quarto_render("/home/rp1/Documents/canthosxh/test.rmd")
 
   Sys.sleep(180)
 
