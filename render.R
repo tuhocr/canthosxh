@@ -4,11 +4,11 @@ library(quarto)
 
 repeat{
 
-  quarto:::quarto_render("/home/rp1/Documents/canthosxh/test.rmd")
+  quarto:::quarto_render("/home/rp1/Documents/canthosxh/index.qmd")
 
-  Sys.sleep(180)
+  Sys.sleep(900)
 
 }
 
 
-system('/home/rp1/Documents/autocommit.sh')
+# system('/home/rp1/Documents/autocommit.sh')
