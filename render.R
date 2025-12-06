@@ -4,7 +4,7 @@ library(quarto)
 
 repeat{
 
-  quarto:::quarto_render("/home/rp1/Documents/canthosxh/index.qmd")
+  try(quarto:::quarto_render("/home/rp1/Documents/canthosxh/index.qmd"))
 
   Sys.sleep(9000)
 
