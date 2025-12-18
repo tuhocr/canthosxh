@@ -3,6 +3,8 @@ library(quarto)
 
 
 repeat{
+  
+  try(quarto:::quarto_render("/home/rp1/Documents/canthosxh/M1_OUTPUT_TABLE_SXH.qmd"))
 
   try(quarto:::quarto_render("/home/rp1/Documents/canthosxh/index.qmd"))
 

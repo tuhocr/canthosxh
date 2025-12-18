@@ -13,3 +13,7 @@ render.R
 test.rmd
 .R
 canthosp/
+*.qmd
+M1_OUTPUT_TABLE_SXH.qmd
+M1_OUTPUT_TABLE_SXH.html
+BAOCAO_SXH_V2.qmd
