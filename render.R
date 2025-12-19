@@ -25,7 +25,7 @@ repeat{
   try(quarto:::quarto_render("/home/rp1/Documents/canthosxh/index.qmd"))
   
   
-  try(system('/home/rp1/Documents/autocommit.sh'))
+ 
   
 
   Sys.sleep(3000)
@@ -33,5 +33,5 @@ repeat{
 }
 
 
-
+try(system('/home/rp1/Documents/autocommit.sh'))
 
