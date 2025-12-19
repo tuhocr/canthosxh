@@ -20,3 +20,5 @@ BAOCAO_SXH_V2.qmd
 FORTMAT_MAP_V12.html
 check.txt
 df_SXH_clean.rds
+*.R
+.qmd
