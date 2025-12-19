@@ -33,5 +33,5 @@ repeat{
 }
 
 
-try(system('/home/rp1/Documents/autocommit.sh'))
+# try(system('/home/rp1/Documents/autocommit.sh'))
 
