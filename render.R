@@ -21,9 +21,9 @@ repeat{
   try(quarto:::quarto_render("/home/rp1/Documents/canthosxh/BAOCAO_TCM.qmd"))
   
   try(quarto:::quarto_render("/home/rp1/Documents/canthosxh/BAOCAO_ODICH_TCM.qmd"))
-  
 
   try(quarto:::quarto_render("/home/rp1/Documents/canthosxh/index.qmd"))
+  
   
   try(system('/home/rp1/Documents/autocommit.sh'))
   
