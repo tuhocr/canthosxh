@@ -1,5 +1,5 @@
 ---
-title: SXH
+title: ODICH_TCM
 author: Hoang Quoc Cuong
 date: last-modified
 format:
@@ -89,7 +89,7 @@ library(sf)
 library(stringi)
 library(ggplot2)
 
-df_SXH <- readRDS("df_SXH_clean.rds") # data SXH
+df_SXH <- readRDS("df_ODICH_TCM_clean.rds") # data SXH
 ```
 
 ```{r}
@@ -104,7 +104,7 @@ update_time <- substr(x = update_time,
 
 
 
-# **DỮ LIỆU SXH 2025**
+# **DỮ LIỆU TCM 2025**
 
 Báo cáo được cập nhập vào lúc `r colorize(update_time, "darkgreen")`
 
@@ -341,7 +341,7 @@ time_2 <- paste0("Tổng số ca: ",
 ```
 
 ```{r}
-time_sxh <- paste0("Tổng số phường, xã có ca SXH: ",
+time_sxh <- paste0("Tổng số phường, xã có ca ODICH_TCM: ",
     length(unique(total_case_day$PHUONG_XA_MOI)))
 ```
 
@@ -354,7 +354,7 @@ time_sxh <- paste0("Tổng số phường, xã có ca SXH: ",
 ```{r}
 if(length(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI)) > 0){
 
-time_3 <- paste0("Tổng số phường, xã có KHÔNG có SXH: ",
+time_3 <- paste0("Tổng số phường, xã có KHÔNG có ODICH_TCM: ",
     length(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI)),
     paste0(" (",
     paste0(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI),
