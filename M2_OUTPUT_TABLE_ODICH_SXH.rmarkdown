@@ -1,0 +1,378 @@
+---
+title: ODICH_SXH
+author: Hoang Quoc Cuong
+date: last-modified
+format:
+  html:
+    toc: true
+    toc-title: "Mục lục"
+    toc-expand: 3
+    toc-depth: 6
+    grid:
+      sidebar-width: 250px
+    toc-location: left
+    number-sections: true
+    number-depth: 8
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+    embed-resources: true
+    anchor-sections: true
+    smooth-scroll: false
+engine: knitr
+knitr:
+  opts_chunk:
+    R.options:
+      width: 140
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, echo=FALSE, results='hide'}
+knitr::opts_chunk$set(message = FALSE,  
+                      warning = FALSE
+                      # echo = FALSE
+                      # results = 'hide'
+                      )   
+```
+
+```{r}
+colorize <- function(string, color) {
+  string_colorized <- paste('<b><span style="color: ',
+                            color,
+                            '">', 
+                            string,
+                            '</span></b>',
+                            sep = "")
+  string_colorized
+}
+
+
+```
+
+
+
+```
+GEOCODING
+
+**SXH**
+
+https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=1204706650#gid=1204706650
+
+**ODICH_SXH**
+
+https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=1416128104#gid=1416128104
+
+**TCM**
+
+https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=880750058#gid=880750058
+
+**ODICH_TCM**
+
+https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=136498177#gid=136498177
+
+ALL
+
+https://docs.google.com/spreadsheets/d/1sAU_uehX6xG4ezw--5JUDHEd96x4EIuyAFOrWMPJks8/edit?usp=sharing
+```
+
+# NHẬP DỮ LIỆU
+
+
+
+```{r}
+library(dplyr)
+library(readxl)
+library(gsheet)
+
+ df_SXH <- gsheet2tbl(url = "https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=1416128104#gid=1416128104")
+# # 
+df_SXH <- as.data.frame(df_SXH)
+# # df_SXH
+# # # 
+# saveRDS(df_SXH, "df_SXH.rds")
+
+# df_SXH <- readRDS("df_SXH.rds")
+
+# df_SXH <- df_SXH |> subset(TTYTKV != "TTYT KV Châu Thành ST")
+
+df_SXH <- df_SXH[ , 1:12]
+```
+
+
+
+# CHUẨN LẠI TÊN CỘT
+
+
+
+```{r}
+names(df_SXH) <- toupper(names(df_SXH))
+
+names(df_SXH) <- c("TTYTKV",
+                   "PHUONG_XA_MOI",
+                   "AP",
+                   "NGAY_VV",
+                   "HO",
+                   "TEN",
+                   "TUOI",
+                   "PHAN_DO",
+                   "GHI_CHU",
+                   "TOA_DO",
+                   "NGUOI_NHAP_LIEU",
+                   "NGAY_NHAP_LIEU")
+
+length(table(df_SXH$TTYTKV))
+```
+
+
+
+
+# KIỂM TRA DỮ LIỆU
+
+
+
+```{r}
+dim(df_SXH)
+# head(df_SXH)
+sapply(df_SXH, class)
+```
+
+
+
+# CHUẨN TÊN TRUNG TÂM Y TẾ
+
+
+
+```{r}
+simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+      sep="", collapse=" ")
+}
+
+for(i in 1:length(df_SXH$PHUONG_XA_MOI)){
+  
+  df_SXH$TTYTKV[i] <- simpleCap(df_SXH$TTYTKV[i])
+  
+}
+
+table(df_SXH$TTYTKV)
+
+df_SXH$TTYTKV[which(df_SXH$TTYTKV %in% c("TTYT TTYT KV Vĩnh Châu",
+                                         "TTYT KV Vĩnh Châu"))] <- "TTYT KV Vĩnh Châu"
+
+df_SXH$TTYTKV[which(df_SXH$TTYTKV %in% c("TTYT KV TP Xuyên",
+                                         "TTYT KV Mỹ Xuyên"))] <- "TTYT KV Mỹ Xuyên"
+
+df_SXH$TTYTKV[which(df_SXH$TTYTKV %in% c("TTYT KV Thành Phố Sóc Trăng",
+                                         "TTYT KV TP Sóc Trăng"))] <- "TTYT KV TP Sóc Trăng"
+
+table(df_SXH$TTYTKV)
+```
+
+
+
+# CHUẨN TÊN PHƯỜNG XÃ
+
+`https://stackoverflow.com/questions/6364783/capitalize-the-first-letter-of-both-words-in-a-two-word-string`
+
+
+
+```{r}
+simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+      sep="", collapse=" ")
+}
+
+for(i in 1:length(df_SXH$PHUONG_XA_MOI)){
+  
+  df_SXH$PHUONG_XA_MOI[i] <- simpleCap(df_SXH$PHUONG_XA_MOI[i])
+  
+}
+```
+
+```{r}
+gsub(pattern = "P\\. ",
+     replacement = "",
+     df_SXH$PHUONG_XA_MOI) -> df_SXH$PHUONG_XA_MOI
+
+# table(check_pxm_ok)
+```
+
+```{r}
+# table(df_SXH$PHUONG_XA_MOI)
+```
+
+```{r}
+length(unique(df_SXH$PHUONG_XA_MOI))
+```
+
+```{r}
+library(stringi)
+
+# base <- data.frame(terme = c("Millésime", 
+#                              "boulangère", 
+#                              "üéâäàåçêëèïîì"))
+# 
+# base$terme = stri_trans_general(str = base$terme, id = "Latin-ASCII")
+```
+
+
+
+
+**SHAPE FILE CẦN THƠ**
+
+
+
+```{r}
+library(dplyr)
+library(sf)
+
+if(Sys.info()['sysname'] == "Windows"){
+
+shp_path <- "home/rp1/Documents/canthosxh/canthosp/cantho.shp"
+
+} else {
+
+shp_path <- "/home/rp1/Documents/canthosxh/canthosp/cantho.shp"
+
+}
+
+# DỮ LIỆU RANH GIỚI 34 TỈNH/THÀNH – 3.321 XÃ/PHƯỜNG
+# `https://www.facebook.com/groups/862687817624503/posts/1907685526458055/`
+# `https://vn2000.vn/don-vi-hanh-chinh-viet-nam`
+
+# bao gom cac tinh sau sat nhap # nếu linux thì /home
+cantho_v1 <- st_read(shp_path)
+
+cantho_v1$ten_xa[cantho_v1$ten_xa == "Cờ Đỏ"] <- "Cờ Đỏ"
+
+cantho_v1$ten_xa[cantho_v1$ten_xa == "Hỏa Lựu"] <- "Hỏa Lựu"
+```
+
+```{r}
+# table(cantho_v1$ten_xa)
+
+# length(unique(cantho_v1$ten_xa))
+```
+
+
+
+**Các xã có bệnh nhân**
+
+
+
+```{r}
+setdiff(df_SXH$PHUONG_XA_MOI, cantho_v1$ten_xa)
+```
+
+```{r}
+intersect(df_SXH$PHUONG_XA_MOI, cantho_v1$ten_xa)
+
+length(intersect(df_SXH$PHUONG_XA_MOI, cantho_v1$ten_xa))
+```
+
+
+
+**Các xã không có bệnh nhân**
+
+
+
+```{r}
+setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI)
+
+length(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI))
+```
+
+
+
+
+# CHUẨN NGÀY THÁNG
+
+
+
+```{r}
+df_SXH$NGAY_VV <- as.Date(df_SXH$NGAY_VV,
+                             format = "%d/%m/%Y")
+
+
+summary(df_SXH$NGAY_VV)
+```
+
+```{r}
+df_SXH$NGAY_NHAP_LIEU <- as.Date(df_SXH$NGAY_NHAP_LIEU,
+                             format = "%d/%m/%Y")
+
+summary(df_SXH$NGAY_NHAP_LIEU)
+```
+
+
+
+# KIỂM TRA MISSING VALUE
+
+
+
+```{r}
+sapply(X = df_SXH, 
+        FUN = function(x){  length(which(is.na(x)))  }   )
+```
+
+
+
+# KIỂM TRA FORMAT TỔNG THỂ
+
+
+
+```{r}
+table(df_SXH$TTYTKV)
+```
+
+```{r}
+table(df_SXH$NGUOI_NHAP_LIEU)
+```
+
+```{r}
+gsub(pattern = "\\,",
+     replacement = "\\.",
+     df_SXH$TUOI) -> df_SXH$TUOI
+
+df_SXH$TUOI <- as.numeric(df_SXH$TUOI)
+
+# table(df_SXH$TUOI)
+
+summary(df_SXH$TUOI)
+```
+
+```{r}
+update_time <- Sys.time()
+
+update_time <- as.character(update_time)
+
+update_time <- substr(x = update_time,
+                      start = 1,
+                      stop = 19)
+```
+
+
+
+# CLEAN XONG DATA
+
+
+
+```{r}
+df_SXH -> df_SXH_clean
+
+saveRDS(df_SXH_clean, "df_ODICH_SXH_clean.rds")
+
+rm(list = ls())
+```
+
+```{=html}
+<b><span style="color:green;  text-align: center;">Technical support: Duc Nguyen | <a href="https://www.tuhocr.com/">tuhocr.com</a></span></b>
+```
+
+```{r}
+
+```
+
