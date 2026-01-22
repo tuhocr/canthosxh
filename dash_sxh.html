@@ -1,0 +1,14 @@
+<div id="post-container" class="post"></div>
+
+<script>
+// List of external post URLs
+const postUrls = [
+'http://book.thuviencanhan.com:3839/sample-apps/dash_sxh/',
+'http://book.thuviencanhan.com:3839/sample-apps/dash_sxh_2/',
+'http://book.thuviencanhan.com:3839/sample-apps/dash_sxh_3/'
+];
+
+const randomUrl = postUrls[Math.floor(Math.random() * postUrls.length)];
+
+window.location.href = randomUrl;
+</script>
