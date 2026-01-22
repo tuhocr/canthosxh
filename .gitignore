@@ -12,6 +12,8 @@ index.rmarkdown
 render.R
 test.rmd
 .R
+*.rds
+.rds
 canthosp/
 *.qmd
 M1_OUTPUT_TABLE_SXH.qmd
