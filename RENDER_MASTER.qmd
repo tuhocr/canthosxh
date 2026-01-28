@@ -1,0 +1,181 @@
+---
+title: DASHBOARD
+author: Hoang Quoc Cuong
+date: last-modified
+format:
+  html:
+    toc: true
+    toc-title: "Mục lục"
+    toc-expand: 3
+    toc-depth: 6
+    grid:
+      sidebar-width: 250px
+    toc-location: left
+    number-sections: true
+    number-depth: 8
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+    embed-resources: true
+    anchor-sections: true
+    smooth-scroll: false
+engine: knitr
+knitr:
+  opts_chunk:
+    R.options:
+      width: 140
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, echo=FALSE, results='hide'}
+knitr::opts_chunk$set(message = FALSE,  
+                      warning = FALSE
+                      # echo = FALSE
+                      # results = 'hide'
+                      )   
+```
+
+
+
+
+```{r}
+library(rmarkdown)
+library(quarto)
+library(gsheet)
+library(dplyr)
+library(readxl)
+library(gsheet)
+
+df_master <- gsheet2tbl(url ="https://docs.google.com/spreadsheets/d/15IX-1-M-OmmOb9doFghPan-DrN5yzpmNYiBE02Xrjgk/edit?gid=0#gid=0")
+
+df_master <- as.data.frame(df_master)
+
+df_master
+```
+
+
+```{r}
+df_master
+```
+
+
+```{r}
+if(Sys.info()['sysname'] == "Windows"){
+
+CLEAN_DATA <- "CLEAN_DATA.qmd"
+BAOCAO_SXH <- "BAOCAO_SXH.qmd"
+
+CLEAN_DATA_OUTPUT <- paste0("CLEAN_DATA_OUTPUT")
+
+} else {
+
+CLEAN_DATA <- "/home/rp1/Documents/canthosxh/CLEAN_DATA.qmd"
+BAOCAO_SXH <- "/home/rp1/Documents/canthosxh/BAOCAO_SXH.qmd"
+
+CLEAN_DATA_OUTPUT <- paste0("/home/rp1/Documents/canthosxh/CLEAN_DATA_OUTPUT")
+
+setwd("/home/rp1/Documents/canthosxh/")
+}
+```
+
+```{r}
+df_master$SHEET -> unique_sheet
+unique_sheet <- unique(unique_sheet)
+```
+
+
+```{r}
+
+saveRDS(CLEAN_DATA_OUTPUT, "CLEAN_DATA_OUTPUT.rds")
+
+
+if (!file.exists(CLEAN_DATA_OUTPUT)){
+   dir.create(file.path(CLEAN_DATA_OUTPUT))
+} 
+```
+
+
+```{r}
+
+repeat{
+  
+    
+  for(h in 1:length(unique_sheet)){
+  
+  df_master_SXH <- df_master |> subset(SHEET == unique_sheet[h])
+    
+    for(i in 1:nrow(df_master_SXH)){
+      
+      df_master_SXH$LINK[i] -> SXH_url
+      saveRDS(SXH_url, "SXH_url.rds")
+      
+      df_master_SXH$SHEET[i] -> SXH_sheet
+      saveRDS(SXH_sheet, "SXH_sheet.rds")
+      
+      df_master_SXH$YEAR[i] -> SXH_year
+      saveRDS(SXH_year, "SXH_year.rds")
+      
+      try(quarto:::quarto_render(CLEAN_DATA,
+                                 output_format = "html",
+                                 # NẾU MUỐN OUTPUT RA THÌ PHẢI SET Ở YAML
+                                 output_file = paste0(unique_sheet[h],
+                                                      "_",
+                                                      df_master_SXH$YEAR[i],
+                                                      ".html")
+                                 )
+          )
+      
+     
+    }
+  }
+    
+    
+    # for(i in 1:nrow(df_master_SXH)){
+    #   
+    #   df_master_SXH$YEAR[i] -> YEAR_loop
+    #   
+    #   saveRDS(YEAR_loop, "YEAR_loop.rds")
+    # 
+    #  try(quarto:::quarto_render(BAOCAO_SXH,
+    #                              output_format = "html",
+    #                              output_file = paste0("BAOCAO_SXH_YEAR_", df_master_SXH$YEAR[i],".html")))
+    # 
+    # 
+    # 
+    # }
+    
+  Sys.sleep(10800)
+  
+}
+```
+
+
+```{r}
+ try(system('/home/rp1/Documents/autocommit.sh'))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,435 @@
+---
+title: SỐ LIỆU THÔ
+author: Hoang Quoc Cuong
+date: last-modified
+format:
+  html:
+    toc: false
+    toc-title: "Mục lục"
+    toc-expand: 3
+    toc-depth: 6
+    grid:
+      sidebar-width: 250px
+    toc-location: left
+    number-sections: true
+    number-depth: 8
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+    embed-resources: true
+    anchor-sections: true
+    smooth-scroll: false
+engine: knitr
+knitr:
+  opts_chunk:
+    R.options:
+      width: 140
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, echo=FALSE, results='hide'}
+knitr::opts_chunk$set(message = FALSE,  
+                      warning = FALSE,
+                      echo = FALSE,
+                      results = 'hide'
+                      )   
+```
+
+```{r}
+colorize <- function(string, color) {
+  string_colorized <- paste('<b><span style="color: ',
+                            color,
+                            '">', 
+                            string,
+                            '</span></b>',
+                            sep = "")
+  string_colorized
+}
+
+
+```
+
+
+
+<!-- # NHẬP DỮ LIỆU -->
+
+```{r}
+library(dplyr)
+library(readxl)
+library(gsheet)
+SXH_url <- readRDS("SXH_url.rds")
+
+df_SXH <- gsheet2tbl(url = SXH_url)
+df_SXH <- as.data.frame(df_SXH)
+
+head(df_SXH)
+names(df_SXH)
+df_SXH <- df_SXH[ , 1:12]
+head(df_SXH)
+names(df_SXH)
+```
+
+```{r}
+SXH_year <- readRDS("SXH_year.rds")
+
+SXH_sheet <- readRDS("SXH_sheet.rds")
+
+file_title <- paste0(SXH_sheet, " ", SXH_year )
+```
+
+# [**`r file_title`**]{style="color:red"} {.unnumbered}
+
+<!-- # CHUẨN LẠI TÊN CỘT -->
+
+```{r}
+names(df_SXH) <- toupper(names(df_SXH))
+
+names(df_SXH) <- c("TTYTKV",
+                   "PHUONG_XA_MOI",
+                   "AP",
+                   "NGAY_VV",
+                   "HO",
+                   "TEN",
+                   "TUOI",
+                   "PHAN_DO",
+                   "GHI_CHU",
+                   "TOA_DO",
+                   "NGUOI_NHAP_LIEU",
+                   "NGAY_NHAP_LIEU")
+
+length(table(df_SXH$TTYTKV))
+
+head(df_SXH)
+```
+
+
+<!-- # KIỂM TRA DỮ LIỆU -->
+
+```{r}
+dim(df_SXH)
+# head(df_SXH)
+sapply(df_SXH, class)
+```
+
+<!-- # CHUẨN TÊN TRUNG TÂM Y TẾ -->
+
+```{r}
+table(df_SXH$TTYTKV)
+length(table(df_SXH$TTYTKV))
+
+simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)),
+        substring(s, 2),
+        sep = "",
+        collapse=" ")
+}
+
+for(i in 1:length(df_SXH$PHUONG_XA_MOI)){
+
+  df_SXH$TTYTKV[i] <- simpleCap(df_SXH$TTYTKV[i])
+
+}
+
+table(df_SXH$TTYTKV)
+length(table(df_SXH$TTYTKV))
+```
+
+<!-- # CHUẨN TÊN PHƯỜNG XÃ -->
+
+<!-- `https://stackoverflow.com/questions/6364783/capitalize-the-first-letter-of-both-words-in-a-two-word-string` -->
+
+```{r}
+table(df_SXH$PHUONG_XA_MOI)
+length(table(df_SXH$PHUONG_XA_MOI))
+
+simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), 
+        substring(s, 2),
+        sep="", 
+        collapse=" ")
+}
+
+for(i in 1:length(df_SXH$PHUONG_XA_MOI)){
+  
+  df_SXH$PHUONG_XA_MOI[i] <- simpleCap(df_SXH$PHUONG_XA_MOI[i])
+  
+}
+
+table(df_SXH$PHUONG_XA_MOI)
+length(table(df_SXH$PHUONG_XA_MOI))
+```
+
+```{r}
+gsub(pattern = "P\\. ",
+     replacement = "",
+     df_SXH$PHUONG_XA_MOI) -> df_SXH$PHUONG_XA_MOI
+
+table(df_SXH$PHUONG_XA_MOI)
+length(table(df_SXH$PHUONG_XA_MOI))
+```
+
+
+```{r}
+
+df_SXH <- df_SXH |> subset(TTYTKV != "NANA" | PHUONG_XA_MOI != "NANA")
+
+```
+
+
+```{r}
+length(unique(df_SXH$PHUONG_XA_MOI))
+```
+
+
+```{r}
+library(stringi)
+
+# base <- data.frame(terme = c("Millésime", 
+#                              "boulangère", 
+#                              "üéâäàåçêëèïîì"))
+# 
+# base$terme = stri_trans_general(str = base$terme, id = "Latin-ASCII")
+```
+
+
+<!-- **SHAPE FILE CẦN THƠ** -->
+
+```{r}
+library(dplyr)
+library(sf)
+
+# if(Sys.info()['sysname'] == "Windows"){
+# 
+# shp_path <- "home/rp1/Documents/canthosxh/canthosp/cantho.shp"
+# 
+# } else {
+# 
+# shp_path <- "/home/rp1/Documents/canthosxh/canthosp/cantho.shp"
+# 
+# }
+# 
+# # DỮ LIỆU RANH GIỚI 34 TỈNH/THÀNH – 3.321 XÃ/PHƯỜNG
+# # `https://www.facebook.com/groups/862687817624503/posts/1907685526458055/`
+# # `https://vn2000.vn/don-vi-hanh-chinh-viet-nam`
+# 
+# # bao gom cac tinh sau sat nhap # nếu linux thì /home
+# cantho_v1 <- st_read(shp_path)
+# 
+# cantho_v1$ten_xa[cantho_v1$ten_xa == "Cờ Đỏ"] <- "Cờ Đỏ"
+# 
+# cantho_v1$ten_xa[cantho_v1$ten_xa == "Hỏa Lựu"] <- "Hỏa Lựu"
+
+# saveRDS(cantho_v1, "cantho_SHP.rds")
+
+cantho_v1 <- readRDS("cantho_SHP.rds")
+```
+
+```{r}
+# table(cantho_v1$ten_xa)
+
+# length(unique(cantho_v1$ten_xa))
+```
+
+<!-- **Các xã có bệnh nhân** -->
+
+```{r}
+setdiff(df_SXH$PHUONG_XA_MOI, cantho_v1$ten_xa)
+```
+
+```{r}
+intersect(df_SXH$PHUONG_XA_MOI, cantho_v1$ten_xa)
+
+length(intersect(df_SXH$PHUONG_XA_MOI, cantho_v1$ten_xa))
+```
+
+<!-- **Các xã không có bệnh nhân** -->
+
+```{r}
+setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI)
+
+length(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI))
+```
+
+<!-- # CHUẨN NGÀY THÁNG -->
+
+```{r}
+table(nchar(df_SXH$NGAY_VV))
+
+options("max.print" = 1e9)
+
+df_SXH$NGAY_VV[which( (nchar(df_SXH$NGAY_VV) > 10   ) )    ] <- substr(df_SXH$NGAY_VV[which( (nchar(df_SXH$NGAY_VV) > 10   ) )    ],
+                                                                       start = 1,
+                                                                       stop = 10)
+table(nchar(df_SXH$NGAY_VV))
+
+
+date_chuan_all <- vector()
+
+for(k in 1:nrow(df_SXH)){
+  
+if(nchar(df_SXH$NGAY_VV[k]) == 5){
+  
+  date_chuan <- as.Date( as.numeric(df_SXH$NGAY_VV[k] ),  origin="1899-12-30") 
+  
+} else {   date_chuan <- as.Date(df_SXH$NGAY_VV[k],
+                             format = "%d/%m/%Y")        }
+  
+date_chuan_all <- append(date_chuan_all, date_chuan)
+
+}
+```
+
+
+```{r}
+summary(date_chuan_all)
+
+
+df_SXH$NGAY_VV <- date_chuan_all
+
+summary(df_SXH$NGAY_VV)
+```
+
+```{r}
+df_SXH$NGAY_NHAP_LIEU <- as.Date(df_SXH$NGAY_NHAP_LIEU,
+                             format = "%d/%m/%Y")
+
+summary(df_SXH$NGAY_NHAP_LIEU)
+```
+
+<!-- # KIỂM TRA MISSING VALUE -->
+
+```{r}
+sapply(X = df_SXH, 
+        FUN = function(x){  length(which(is.na(x)))  }   )
+```
+
+<!-- # KIỂM TRA FORMAT TỔNG THỂ -->
+
+```{r}
+table(df_SXH$TTYTKV)
+```
+
+```{r}
+table(df_SXH$NGUOI_NHAP_LIEU)
+```
+
+<!-- # FORMAT TUỔI -->
+
+```{r}
+gsub(pattern = "\\,",
+     replacement = "\\.",
+     df_SXH$TUOI) -> df_SXH$TUOI
+
+df_SXH$TUOI <- as.numeric(df_SXH$TUOI)
+
+# table(df_SXH$TUOI)
+
+summary(df_SXH$TUOI)
+```
+
+<!-- # CLEAN XONG DATA -->
+
+```{r}
+df_SXH -> df_SXH_clean
+
+library(lubridate)
+
+df_SXH_clean$YEAR_VV <- lubridate:::year(df_SXH_clean$NGAY_VV)
+df_SXH_clean$MONTH_VV <- lubridate:::month(df_SXH_clean$NGAY_VV)
+df_SXH_clean$WEEK_VV <- lubridate:::week(df_SXH_clean$NGAY_VV)
+df_SXH_clean$DAY_VV <- lubridate:::day(df_SXH_clean$NGAY_VV)
+
+which.max(table(df_SXH_clean$YEAR_VV)) -> ok_year
+
+SXH_sheet <- readRDS("SXH_sheet.rds")
+
+df_SXH_clean$SHEET <- SXH_sheet
+  
+df_SXH_clean$URL_GOC <- SXH_url
+
+CLEAN_DATA_OUTPUT <- readRDS("CLEAN_DATA_OUTPUT.rds")
+
+saveRDS(df_SXH_clean, paste0(CLEAN_DATA_OUTPUT, "/", SXH_sheet, "_YEAR_", names(ok_year),".rds"))
+```
+
+
+```{r}
+grep("ODICH",
+     SXH_sheet) -> check_spell
+
+
+
+if(length(check_spell) == 1){
+  
+  case_name_ok <- paste0("Tổng số ổ dịch: ", nrow(df_SXH_clean))
+} else {  case_name_ok <- paste0("Tổng số ca: ", nrow(df_SXH_clean))         }
+
+
+
+
+
+time_1 <- paste0(SXH_sheet, " | Năm ",
+                 names(ok_year),
+                 " | ", case_name_ok)
+
+time_2 <- paste0("Từ ngày ",
+    as.character(range(df_SXH_clean$NGAY_VV)[1]),
+    " đến ngày ",
+    as.character(range(df_SXH_clean$NGAY_VV)[2]))
+```
+
+`r colorize(time_1, "blue")`
+
+`r colorize(time_2, "blue")`
+
+```{r, results='hold'}
+library(DT)
+library(dplyr)
+df_SXH_clean |> dplyr:::arrange(desc(NGAY_VV),
+                               desc(PHUONG_XA_MOI))  -> df_SXH_clean
+
+DT:::datatable(
+  df_SXH_clean[ , c(1,2,4,7,8,9,11)],
+  filter = "top",
+  rownames = F,
+  extensions = 'Buttons',
+  options = list(
+    dom = 'Blfrtip',
+    buttons = c('copy', 'excel', 'pdf'),
+    lengthMenu = list(c(30, 50, -1),
+                      c('30', '50', "All")),
+    paging = T)
+)
+```
+
+
+```{=html}
+<span text-align: center;">Technical support: Duc Nguyen | <a href="https://www.tuhocr.com/">tuhocr.com</a></span>
+```
+
+```{r}
+# table(df_SXH$TTYTKV,
+#       df_SXH$PHUONG_XA_MOI) -> name_ttyt
+# 
+# name_ttyt <- as.data.frame(name_ttyt)
+# name_ttyt <- name_ttyt |> subset(Freq != 0)
+# 
+# name_ttyt |> dplyr:::arrange(Var1) -> name_ttyt
+# 
+# names(name_ttyt) <- c("TTYTKV", "PHUONG_XA_MOI", "FREQ")
+# 
+# name_ttyt_clean <- name_ttyt[ , -3]
+# 
+# library(openxlsx)
+# 
+# write.xlsx(name_ttyt_clean, "name_ttyt_clean.xlsx")
+```
+
+
+```{r}
+# rm(list = ls())
+```
+

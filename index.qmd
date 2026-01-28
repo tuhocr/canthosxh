@@ -39,18 +39,16 @@ knitr::opts_chunk$set(message = FALSE,
 
 [**DASHBOARD**](https://tuhocr.github.io/canthosxh/dash_sxh.html){style="color:red"}
 
-**[BAOCAO_SXH](https://tuhocr.github.io/canthosxh/BAOCAO_SXH_YEAR_2025.html)**
+**[SỐ LIỆU THÔ SXH](https://tuhocr.github.io/canthosxh/SXH_2025)**
 
-**[BAOCAO_ODICH_SXH](https://tuhocr.github.io/canthosxh/BAOCAO_ODICH_SXH.html)**
+**[SỐ LIỆU THÔ ODICH_SXH](https://tuhocr.github.io/canthosxh/ODICH_SXH_SXH_2025)**
 
-**[BAOCAO_TCM](https://tuhocr.github.io/canthosxh/BAOCAO_TCM.html)**
+**[SỐ LIỆU THÔ TCM](https://tuhocr.github.io/canthosxh/TCM_2025)**
 
-**[BAOCAO_ODICH_TCM](https://tuhocr.github.io/canthosxh/BAOCAO_ODICH_TCM.html)**
-
+**[SỐ LIỆU THÔ ODICH_TCM](https://tuhocr.github.io/canthosxh/ODICH_TCM_2025)**
 
 # 2026
 
-**[BAOCAO_SXH](https://tuhocr.github.io/canthosxh/BAOCAO_SXH_YEAR_2026.html)**
 
 
 
