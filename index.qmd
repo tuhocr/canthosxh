@@ -41,7 +41,7 @@ knitr::opts_chunk$set(message = FALSE,
 
 **[SỐ LIỆU THÔ SXH](https://tuhocr.github.io/canthosxh/SXH_2025)**
 
-**[SỐ LIỆU THÔ ODICH_SXH](https://tuhocr.github.io/canthosxh/ODICH_SXH_SXH_2025)**
+**[SỐ LIỆU THÔ ODICH_SXH](https://tuhocr.github.io/canthosxh/ODICH_SXH_2025)**
 
 **[SỐ LIỆU THÔ TCM](https://tuhocr.github.io/canthosxh/TCM_2025)**
 
@@ -51,7 +51,7 @@ knitr::opts_chunk$set(message = FALSE,
 
 **[SỐ LIỆU THÔ SXH](https://tuhocr.github.io/canthosxh/SXH_2026)**
 
-**[SỐ LIỆU THÔ ODICH_SXH](https://tuhocr.github.io/canthosxh/ODICH_SXH_SXH_2026)**
+**[SỐ LIỆU THÔ ODICH_SXH](https://tuhocr.github.io/canthosxh/ODICH_SXH_2026)**
 
 **[SỐ LIỆU THÔ TCM](https://tuhocr.github.io/canthosxh/TCM_2026)**
 
