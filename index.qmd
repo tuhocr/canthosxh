@@ -35,7 +35,7 @@ knitr::opts_chunk$set(message = FALSE,
                       results = 'hide')   
 ```
 
-[**DASHBOARD**](https://tuhocr.github.io/canthosxh/dash_sxh.html){style="color:red"}
+[**DASHBOARD**](http://app.tuhocr.com/dashboard/canthosxh/){style="color:red"}
 
 # 2025
 
