@@ -336,14 +336,17 @@ server <- function(input, output) {
     #              })
     
     cantho_ok -> cantho_bug
+    cantho_bug$ten_xa[cantho_bug$ten_xa == "Mỹ Qưới"] <- "Mỹ Quới"
+    sort(table(cantho_bug$ten_xa))
     
-    cantho_bug |> dplyr:::group_by(ten_xa, geometry) |> dplyr:::summarise(TONG_SO_CA = sum(TONG_SO_CA)) -> cantho_bug_fix
+    cantho_bug |> dplyr:::group_by(ten_xa) |> dplyr:::summarise(TONG_SO_CA = sum(TONG_SO_CA)) -> cantho_bug_fix
     
-    
+    sort(table(cantho_bug_fix$ten_xa))
     plot_ly(cantho_ok) 
     plot_ly(cantho_bug)
     
-    cantho_bug_fix$ten_xa[cantho_bug_fix$ten_xa == "Mỹ Qưới"] <- "Mỹ Quới"
+  
+    
     plot_ly(cantho_bug_fix)
   }) |>
     bindEvent(input$run1)
