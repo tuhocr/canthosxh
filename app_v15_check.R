@@ -488,12 +488,12 @@ server <- function(input, output) {
       cantho_ok,
       # cantho_small,
             split = ~ten_xa,
-            color = ~TONG_SO_CA,
+            # color = ~TONG_SO_CA,
             # colors = c("lightyellow", "red"),
             # colors = rev(viridisLite::inferno(20)),
             colors = rev(viridisLite::viridis(20)),
             # text = ~paste0(ten_xa, "\n", TONG_SO_CA, " ca SXH"),
-            text = ~text_chuan,
+            # text = ~text_chuan,
             hoveron = "fills",
             hoverinfo = "text",
             hoverlabel = list(bgcolor = "white"),
@@ -510,7 +510,14 @@ server <- function(input, output) {
   }) |>
     bindEvent(input$run1)
   
+  plot_ly(cantho_small)
+  plot_ly(cantho_ok)
   
+  cantho_ok <- cantho_ok[ , c(5, 1:4,6)]
+  plotly::plot_ly(sf::st_cast(cantho_small, "MULTIPOLYGON"))
+  plotly::plot_ly(sf::st_cast(cantho_ok, "MULTIPOLYGON"))
+  
+  plot_ly(cantho_ok)
 
   # output$kq1 = DT:::renderDT(
   #   pre_cantho_ok()[[3]],
