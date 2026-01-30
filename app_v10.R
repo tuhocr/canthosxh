@@ -50,7 +50,7 @@ df <- as.data.frame(df)
 
 if(Sys.info()['sysname'] == "Windows"){
   
-  cantho_v1 <- readRDS("cantho_sf.rds")
+  cantho_v1 <- readRDS("cantho_SHP.rds")
   
 } else {
   
@@ -88,24 +88,24 @@ date_ori_max  <- range(df$NGAY_VV)[2]
 
 #### GET URL GITHUB ####
 
-ori <- "https://github.com/tuhocr/canthosxh"
-
-ori_1 <- gsub(pattern = "https://github.com/",
-              replacement = "",
-              ori)
-
-strsplit(ori_1, split = "/") -> ori_2
-
-unlist(ori_2) -> ori_3
-
-repo <- paste0(ori_3[1], "/", ori_3[2])
-
-branch <- "main"
-
-folder_ok <- ori_3[length(ori_3)]
-
-
-get_path <- funspotr:::github_contents(repo, branch)
+# ori <- "https://github.com/tuhocr/canthosxh"
+# 
+# ori_1 <- gsub(pattern = "https://github.com/",
+#               replacement = "",
+#               ori)
+# 
+# strsplit(ori_1, split = "/") -> ori_2
+# 
+# unlist(ori_2) -> ori_3
+# 
+# repo <- paste0(ori_3[1], "/", ori_3[2])
+# 
+# branch <- "main"
+# 
+# folder_ok <- ori_3[length(ori_3)]
+# 
+# 
+# get_path <- funspotr:::github_contents(repo, branch)
 
 #### SETUP UI ####
 
