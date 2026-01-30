@@ -399,7 +399,9 @@ server <- function(input, output) {
                  })
     
     
-    plot_ly(pre_cantho_ok()[[1]],
+    plot_ly(
+      pre_cantho_ok()[[1]],
+            # cantho_v1,
             split = ~ten_xa,
             color = ~TONG_SO_CA,
             # colors = c("lightyellow", "red"),
@@ -440,10 +442,10 @@ server <- function(input, output) {
   
   
   
-  output$check1 <- renderText({ 
-    # pre_cantho_ok()[[2]]
-    "bbb"
-    })
+  # output$check1 <- renderText({ 
+  #   # pre_cantho_ok()[[2]]
+  #   "bbb"
+  #   })
   
   
   
@@ -587,8 +589,10 @@ shinyApp(ui = ui, server = server)
 
 
 
-
-
+# library(rnaturalearth)
+# library(plotly)
+# canada <- ne_states(country = "Canada", returnclass = "sf")
+# plot_ly(canada, split = ~name, color = ~provnum_ne)
 
 
 
