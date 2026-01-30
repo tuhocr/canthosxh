@@ -251,11 +251,11 @@ server <- function(input, output) {
     
     #TRÍCH THEO NGÀY
     
-    # df_SXH <- df |> subset(NGAY_VV >= as.Date("2025-05-22") &
-    #                          NGAY_VV <=  as.Date("2025-07-14"))
+    df_SXH <- df |> subset(NGAY_VV >= as.Date("2025-05-22") &
+                             NGAY_VV <=  as.Date("2025-07-14"))
     
-    df_SXH <- df |> subset(NGAY_VV >= input$extract_date_1[1] &
-                             NGAY_VV <= input$extract_date_1[2])
+    # df_SXH <- df |> subset(NGAY_VV >= input$extract_date_1[1] &
+    #                          NGAY_VV <= input$extract_date_1[2])
     
     table(df_SXH$TTYTKV,
           df_SXH$PHUONG_XA_MOI,

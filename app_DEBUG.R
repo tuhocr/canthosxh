@@ -48,7 +48,8 @@ if(Sys.info()['sysname'] == "Windows"){
   
 } else {
   
-  cantho_v1 <- readRDS("/srv/shiny-server/sample-apps/dash_sxh/cantho_sf.rds")
+  cantho_v1 <- readRDS("/home/rp1/Documents/canthosxh/cantho_sf.rds")
+  # cantho_v1 <- readRDS("/home/rp1/Documents/canthosxh/cantho_SHP.rds")
   
 }
 
@@ -250,8 +251,8 @@ server <- function(input, output) {
     
     #TRÍCH THEO NGÀY
     
-    # df_SXH <- df |> subset(NGAY_VV >= as.Date("2025-05-22") &
-    #                          NGAY_VV <=  as.Date("2025-07-14"))
+    df_SXH <- df |> subset(NGAY_VV >= as.Date("2025-05-22") &
+                             NGAY_VV <=  as.Date("2025-07-14"))
     
     df_SXH <- df |> subset(NGAY_VV >= input$extract_date_1[1] &
                              NGAY_VV <= input$extract_date_1[2])
@@ -326,17 +327,17 @@ server <- function(input, output) {
     }
     
     
-    withProgress(message = 'Đang xử lý dữ liệu',
-                 detail = 'Vui lòng chờ trong giây lát...', value = 0, {
-                   for (i in 1:15) {
-                     incProgress(1/15)
-                     Sys.sleep(0.25)
-                   }
-                 })
+    # withProgress(message = 'Đang xử lý dữ liệu',
+    #              detail = 'Vui lòng chờ trong giây lát...', value = 0, {
+    #                for (i in 1:15) {
+    #                  incProgress(1/15)
+    #                  Sys.sleep(0.25)
+    #                }
+    #              })
     
-    # cantho_ok -> cantho_ok_debug
+    cantho_ok -> cantho_bug
     plot_ly(cantho_ok) 
-    
+    plot_ly(cantho_bug)
     
   }) |>
     bindEvent(input$run1)
