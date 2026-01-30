@@ -55,7 +55,7 @@ if(Sys.info()['sysname'] == "Windows"){
 } else {
   
   # cantho_v1 <- readRDS("/srv/shiny-server/sample-apps/dash_sxh/cantho_sf.rds")
-  cantho_v1 <- readRDS("/home/rp1/Documents/canthosxh/cantho_sf.rds")
+  cantho_v1 <- readRDS("/home/rp1/Documents/canthosxh/cantho_SHP.rds")
 }
 
 cantho_small <- cantho_v1[ , c(13, 2, 9)]
