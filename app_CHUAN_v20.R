@@ -50,12 +50,12 @@ df <- as.data.frame(df)
 
 if(Sys.info()['sysname'] == "Windows"){
   
-  cantho_v1 <- readRDS("cantho_SHP.rds")
+  cantho_v1 <- readRDS("cantho_sf.rds")
   
 } else {
   
-  # cantho_v1 <- readRDS("/srv/shiny-server/sample-apps/dash_sxh/cantho_sf.rds")
-  cantho_v1 <- readRDS("/home/rp1/Documents/canthosxh/cantho_SHP.rds")
+  cantho_v1 <- readRDS("/home/rp1/Documents/canthosxh/cantho_sf.rds")
+  # cantho_v1 <- readRDS("/home/rp1/Documents/canthosxh/cantho_SHP.rds")
 }
 
 cantho_small <- cantho_v1[ , c(13, 2, 9)]
@@ -292,108 +292,7 @@ server <- function(input, output) {
   
   #ĐỒ THỊ TỔNG SỐ CA TRONG NĂM THEO KHU VỰC
   
-  # pre_cantho_ok <- reactive(x = {
-  #   
-  #   df_SXH <- df |> subset(NGAY_VV >= input$extract_date_1[1] &
-  #                            NGAY_VV <= input$extract_date_1[2])
-  #   
-  #   table(df_SXH$TTYTKV,
-  #         df_SXH$PHUONG_XA_MOI,
-  #         df_SXH$NGAY_VV) -> stat_day
-  #   
-  #   as.data.frame(stat_day) -> stat_day_df
-  #   
-  #   names(stat_day_df) <- c("TTYTKV", "PHUONG_XA_MOI", "NGAY_VV", "COUNT")
-  #   
-  #   stat_day_df$TTYTKV <- as.character(stat_day_df$TTYTKV)
-  #   
-  #   stat_day_df$PHUONG_XA_MOI <- as.character(stat_day_df$PHUONG_XA_MOI)
-  #   
-  #   stat_day_df$NGAY_VV <- as.character(stat_day_df$NGAY_VV)
-  #   
-  #   stat_day_df$NGAY_VV <- as.Date(stat_day_df$NGAY_VV)
-  #   
-  #   stat_day_df |> dplyr:::arrange(desc(TTYTKV),
-  #                                  desc(PHUONG_XA_MOI),
-  #                                  desc(NGAY_VV))  -> stat_day_df_final
-  #   
-  #   stat_day_df <- stat_day_df |> subset(COUNT != 0)
-  #   
-  #   stat_day_df -> stat_day_df_DAY_ORI
-  #   
-  #   time_1 <- paste0("Từ ngày ",
-  #                    as.character(range(stat_day_df$NGAY_VV)[1]),
-  #                    " đến ngày ",
-  #                    as.character(range(stat_day_df$NGAY_VV)[2]))
-  #   
-  #   stat_day_df |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |>
-  #     dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> dplyr:::arrange(TTYTKV, desc(TONG_SO_CA), PHUONG_XA_MOI) |>
-  #     as.data.frame() -> total_case_day
-  #   
-  #   total_case_day -> total_case_day_YEAR_ORI
-  #   
-  #   names(total_case_day)[2] <- "ten_xa"
-  #   
-  #   cantho_ok <- merge(x = cantho_small,
-  #                      y = total_case_day,
-  #                      all = TRUE,
-  #                      by = "ten_xa")
-  #   
-  #   paste0("\nTổng số ca SXH trong tỉnh Cần Thơ (",
-  #          sum(total_case_day$TONG_SO_CA),
-  #          " ca)\n",
-  #          time_1 , "\n\n") -> total_case
-  #   
-  #   cantho_ok$text_chuan <- NA
-  #   
-  #   for(i in 1:nrow(cantho_ok)){
-  #     
-  #     if(!is.na(cantho_ok$TONG_SO_CA[i]))  {
-  #       
-  #       cantho_ok$text_chuan[i] <- paste0(cantho_ok$ten_xa[i], 
-  #                                         "\n", 
-  #                                         cantho_ok$TONG_SO_CA[i], 
-  #                                         " ca SXH")
-  #     } else {
-  #       
-  #       cantho_ok$text_chuan[i] <- paste0(cantho_ok$ten_xa[i], 
-  #                                         "\n", 
-  #                                         "Không có ca SXH")  
-  #       
-  #     }
-  #     
-  #   }
-  #   
-  #   as.data.frame(cantho_ok) -> cantho_ok_yes
-  #   
-  #   gomlai <- list()
-  #   
-  #   gomlai[[1]] <- cantho_ok
-  #   
-  #   gomlai[[2]] <- total_case
-  #   
-  #   cantho_ok_yes <- cantho_ok_yes[ , c("TTYTKV", "ten_xa", "TONG_SO_CA")]
-  #   
-  #   cantho_ok_yes |> dplyr:::arrange(desc(TONG_SO_CA)) -> cantho_ok_yes
-  #   
-  #   names(cantho_ok_yes) <- c("TTYTKV", "PHƯỜNG, XÃ", "TỔNG SỐ CA")
-  #   
-  #   
-  #   gomlai[[3]] <- cantho_ok_yes
-  #   # reactive phải gom lại bằng cách dùng list.
-  #   gomlai_chuan <- gomlai
-  # }
-  # )  
-  
-  
-  
-  
-  output$p1 <- renderPlotly({
-    
-    
-    ##############
-    ##############
-    
+  pre_cantho_ok <- reactive(x = {
     
     df_SXH <- df |> subset(NGAY_VV >= input$extract_date_1[1] &
                              NGAY_VV <= input$extract_date_1[2])
@@ -465,14 +364,31 @@ server <- function(input, output) {
       
     }
     
+    as.data.frame(cantho_ok) -> cantho_ok_yes
+    
+    gomlai <- list()
+    
+    gomlai[[1]] <- cantho_ok
+    
+    gomlai[[2]] <- total_case
+    
+    cantho_ok_yes <- cantho_ok_yes[ , c("TTYTKV", "ten_xa", "TONG_SO_CA")]
+    cantho_ok_yes |> dplyr:::arrange(desc(TONG_SO_CA)) -> cantho_ok_yes
+    names(cantho_ok_yes) <- c("TTYTKV", "PHƯỜNG, XÃ", "TỔNG SỐ CA")
     
     
+    gomlai[[3]] <- cantho_ok_yes
+    # reactive phải gom lại bằng cách dùng list.
+    gomlai_chuan <- gomlai
+  }
+  )  
+  
+  
+  
+  
+  output$p1 <- renderPlotly({
     
     
-    
-    
-    #################
-    #################
     
     withProgress(message = 'Đang xử lý dữ liệu',
                  detail = 'Vui lòng chờ trong giây lát...', value = 0, {
@@ -483,17 +399,14 @@ server <- function(input, output) {
                  })
     
     
-    plot_ly(
-      # pre_cantho_ok()[[1]],
-      cantho_ok[ , ],
-      # cantho_small,
+    plot_ly(pre_cantho_ok()[[1]],
             split = ~ten_xa,
-            # color = ~TONG_SO_CA,
+            color = ~TONG_SO_CA,
             # colors = c("lightyellow", "red"),
             # colors = rev(viridisLite::inferno(20)),
             colors = rev(viridisLite::viridis(20)),
             # text = ~paste0(ten_xa, "\n", TONG_SO_CA, " ca SXH"),
-            # text = ~text_chuan,
+            text = ~text_chuan,
             hoveron = "fills",
             hoverinfo = "text",
             hoverlabel = list(bgcolor = "white"),
@@ -502,35 +415,28 @@ server <- function(input, output) {
             width = 600,
             height = 600) %>% 
       
-      layout(showlegend = FALSE
-             # title = pre_cantho_ok()[[2]]
+      layout(showlegend = FALSE,
+             title = pre_cantho_ok()[[2]]
       )  %>% colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>')
     
     
   }) |>
     bindEvent(input$run1)
   
-  # plot_ly(cantho_small)
-  # plot_ly(cantho_ok)
-  # 
-  # cantho_ok <- cantho_ok[ , c(5, 1:4,6)]
-  # plotly::plot_ly(sf::st_cast(cantho_small, "MULTIPOLYGON"))
-  # plotly::plot_ly(sf::st_cast(cantho_ok, "MULTIPOLYGON"))
   
-  # plot_ly(cantho_ok)
 
-  # output$kq1 = DT:::renderDT(
-  #   pre_cantho_ok()[[3]],
-  #   rownames= FALSE,
-  #   extensions = 'Buttons',
-  #   options = list(
-  #     dom = 'Blfrtip',
-  #     buttons = c('copy', 'excel', 'pdf'),
-  #     lengthMenu = list(c(10, 30, -1),
-  #                       c('10', '30', 'All')),
-  #     paging = T)
-  # ) |>
-  #   bindEvent(input$run1)
+  output$kq1 = DT:::renderDT(
+    pre_cantho_ok()[[3]],
+    rownames= FALSE,
+    extensions = 'Buttons',
+    options = list(
+      dom = 'Blfrtip',
+      buttons = c('copy', 'excel', 'pdf'),
+      lengthMenu = list(c(10, 30, -1),
+                        c('10', '30', 'All')),
+      paging = T)
+  ) |>
+    bindEvent(input$run1)
   
   
   
@@ -542,117 +448,117 @@ server <- function(input, output) {
   
   
   #ĐỒ THỊ TỔNG SỐ CA TRONG NĂM THEO THÁNG
-  # output$p2 <- renderPlotly({
-  #   
-  #   #debug
-  #   # plot_ly(mtcars, y = ~mpg, color = I("black"), 
-  #   #         alpha = 0.1, boxpoints = "suspectedoutliers")
-  #   
-  #   #TRÍCH THEO THÁNG
-  #   
-  #   
-  #   df$THANG_VV <- lubridate::month(df$NGAY_VV)
-  #   
-  #   df_SXH  <- df |> subset(THANG_VV == input$select_month) 
-  #   
-  #   table(df_SXH$TTYTKV,
-  #         df_SXH$PHUONG_XA_MOI,
-  #         df_SXH$NGAY_VV) -> stat_day
-  #   
-  #   as.data.frame(stat_day) -> stat_day_df
-  #   
-  #   names(stat_day_df) <- c("TTYTKV", "PHUONG_XA_MOI", "NGAY_VV", "COUNT")
-  #   
-  #   stat_day_df$TTYTKV <- as.character(stat_day_df$TTYTKV)
-  #   
-  #   stat_day_df$PHUONG_XA_MOI <- as.character(stat_day_df$PHUONG_XA_MOI)
-  #   
-  #   stat_day_df$NGAY_VV <- as.character(stat_day_df$NGAY_VV)
-  #   
-  #   stat_day_df$NGAY_VV <- as.Date(stat_day_df$NGAY_VV)
-  #   
-  #   stat_day_df |> dplyr:::arrange(desc(TTYTKV),
-  #                                  desc(PHUONG_XA_MOI),
-  #                                  desc(NGAY_VV))  -> stat_day_df_final
-  #   
-  #   stat_day_df <- stat_day_df |> subset(COUNT != 0)
-  #   
-  #   stat_day_df -> stat_day_df_DAY_ORI
-  #   
-  #   time_1 <- paste0("Từ ngày ",
-  #                    as.character(range(stat_day_df$NGAY_VV)[1]),
-  #                    " đến ngày ",
-  #                    as.character(range(stat_day_df$NGAY_VV)[2]))
-  #   
-  #   stat_day_df |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |>
-  #     dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> dplyr:::arrange(TTYTKV, desc(TONG_SO_CA), PHUONG_XA_MOI) |>
-  #     as.data.frame() -> total_case_day
-  #   
-  #   total_case_day -> total_case_day_YEAR_ORI
-  #   
-  #   names(total_case_day)[2] <- "ten_xa"
-  #   
-  #   cantho_ok <- merge(x = cantho_small,
-  #                      y = total_case_day,
-  #                      all = TRUE,
-  #                      by = "ten_xa")
-  #   
-  #   
-  #   paste0("\nTổng số ca SXH trong tỉnh Cần Thơ (",
-  #          sum(total_case_day$TONG_SO_CA),
-  #          " ca)\n",
-  #          time_1 , "\n\n") -> total_case
-  #   
-  #   cantho_ok$text_chuan <- NA
-  #   
-  #   for(i in 1:nrow(cantho_ok)){
-  #     
-  #     if(!is.na(cantho_ok$TONG_SO_CA[i]))  {
-  #       
-  #       cantho_ok$text_chuan[i] <- paste0(cantho_ok$ten_xa[i], 
-  #                                         "\n", 
-  #                                         cantho_ok$TONG_SO_CA[i], 
-  #                                         " ca SXH")
-  #     } else {
-  #       
-  #       cantho_ok$text_chuan[i] <- paste0(cantho_ok$ten_xa[i], 
-  #                                         "\n", 
-  #                                         "Không có ca SXH")  
-  #       
-  #     }
-  #     
-  #   }
-  #   
-  #   withProgress(message = 'Đang xử lý dữ liệu',
-  #                detail = 'Vui lòng chờ trong giây lát...', value = 0, {
-  #                  for (i in 1:15) {
-  #                    incProgress(1/15)
-  #                    Sys.sleep(0.25)
-  #                  }
-  #                })
-  #   
-  #   plot_ly(cantho_ok[ , ],
-  #           split = ~ten_xa,
-  #           color = ~TONG_SO_CA,
-  #           # colors = c("lightyellow", "red"),
-  #           # colors = rev(viridisLite::inferno(20)),
-  #           colors = rev(viridisLite::viridis(20)),
-  #           # text = ~paste0(ten_xa, "\n", TONG_SO_CA, " ca SXH"),
-  #           text = ~text_chuan,
-  #           hoveron = "fills",
-  #           hoverinfo = "text",
-  #           hoverlabel = list(bgcolor = "white"),
-  #           stroke = I("black"),
-  #           span = I(0.5),
-  #           width = 600,
-  #           height = 600) %>% 
-  #     
-  #     layout(showlegend = FALSE,
-  #            title = total_case
-  #     )  %>% colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>')
-  #   
-  # }) |>
-  #   bindEvent(input$run2)
+  output$p2 <- renderPlotly({
+    
+    #debug
+    # plot_ly(mtcars, y = ~mpg, color = I("black"), 
+    #         alpha = 0.1, boxpoints = "suspectedoutliers")
+    
+    #TRÍCH THEO THÁNG
+    
+    
+    df$THANG_VV <- lubridate::month(df$NGAY_VV)
+    
+    df_SXH  <- df |> subset(THANG_VV == input$select_month) 
+    
+    table(df_SXH$TTYTKV,
+          df_SXH$PHUONG_XA_MOI,
+          df_SXH$NGAY_VV) -> stat_day
+    
+    as.data.frame(stat_day) -> stat_day_df
+    
+    names(stat_day_df) <- c("TTYTKV", "PHUONG_XA_MOI", "NGAY_VV", "COUNT")
+    
+    stat_day_df$TTYTKV <- as.character(stat_day_df$TTYTKV)
+    
+    stat_day_df$PHUONG_XA_MOI <- as.character(stat_day_df$PHUONG_XA_MOI)
+    
+    stat_day_df$NGAY_VV <- as.character(stat_day_df$NGAY_VV)
+    
+    stat_day_df$NGAY_VV <- as.Date(stat_day_df$NGAY_VV)
+    
+    stat_day_df |> dplyr:::arrange(desc(TTYTKV),
+                                   desc(PHUONG_XA_MOI),
+                                   desc(NGAY_VV))  -> stat_day_df_final
+    
+    stat_day_df <- stat_day_df |> subset(COUNT != 0)
+    
+    stat_day_df -> stat_day_df_DAY_ORI
+    
+    time_1 <- paste0("Từ ngày ",
+                     as.character(range(stat_day_df$NGAY_VV)[1]),
+                     " đến ngày ",
+                     as.character(range(stat_day_df$NGAY_VV)[2]))
+    
+    stat_day_df |> dplyr:::group_by(TTYTKV, PHUONG_XA_MOI) |>
+      dplyr:::summarise(TONG_SO_CA = sum(COUNT)) |> dplyr:::arrange(TTYTKV, desc(TONG_SO_CA), PHUONG_XA_MOI) |>
+      as.data.frame() -> total_case_day
+    
+    total_case_day -> total_case_day_YEAR_ORI
+    
+    names(total_case_day)[2] <- "ten_xa"
+    
+    cantho_ok <- merge(x = cantho_small,
+                       y = total_case_day,
+                       all = TRUE,
+                       by = "ten_xa")
+    
+    
+    paste0("\nTổng số ca SXH trong tỉnh Cần Thơ (",
+           sum(total_case_day$TONG_SO_CA),
+           " ca)\n",
+           time_1 , "\n\n") -> total_case
+    
+    cantho_ok$text_chuan <- NA
+    
+    for(i in 1:nrow(cantho_ok)){
+      
+      if(!is.na(cantho_ok$TONG_SO_CA[i]))  {
+        
+        cantho_ok$text_chuan[i] <- paste0(cantho_ok$ten_xa[i], 
+                                          "\n", 
+                                          cantho_ok$TONG_SO_CA[i], 
+                                          " ca SXH")
+      } else {
+        
+        cantho_ok$text_chuan[i] <- paste0(cantho_ok$ten_xa[i], 
+                                          "\n", 
+                                          "Không có ca SXH")  
+        
+      }
+      
+    }
+    
+    withProgress(message = 'Đang xử lý dữ liệu',
+                 detail = 'Vui lòng chờ trong giây lát...', value = 0, {
+                   for (i in 1:15) {
+                     incProgress(1/15)
+                     Sys.sleep(0.25)
+                   }
+                 })
+    
+    plot_ly(cantho_ok[ , ],
+            split = ~ten_xa,
+            color = ~TONG_SO_CA,
+            # colors = c("lightyellow", "red"),
+            # colors = rev(viridisLite::inferno(20)),
+            colors = rev(viridisLite::viridis(20)),
+            # text = ~paste0(ten_xa, "\n", TONG_SO_CA, " ca SXH"),
+            text = ~text_chuan,
+            hoveron = "fills",
+            hoverinfo = "text",
+            hoverlabel = list(bgcolor = "white"),
+            stroke = I("black"),
+            span = I(0.5),
+            width = 600,
+            height = 600) %>% 
+      
+      layout(showlegend = FALSE,
+             title = total_case
+      )  %>% colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>')
+    
+  }) |>
+    bindEvent(input$run2)
   
   
   
@@ -681,10 +587,8 @@ shinyApp(ui = ui, server = server)
 
 
 
-# library(rnaturalearth)
-# library(plotly)
-# canada <- ne_states(country = "Canada", returnclass = "sf")
-# plot_ly(canada, split = ~name, color = ~provnum_ne)
+
+
 
 
 

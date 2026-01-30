@@ -48,7 +48,8 @@ if(Sys.info()['sysname'] == "Windows"){
   
 } else {
   
-  cantho_v1 <- readRDS("/srv/shiny-server/sample-apps/dash_sxh/cantho_sf.rds")
+  cantho_v1 <- readRDS("/home/rp1/Documents/canthosxh/cantho_sf.rds")
+  # cantho_v1 <- readRDS("/srv/shiny-server/sample-apps/dash_sxh/cantho_sf.rds")
   
 }
 
@@ -334,8 +335,26 @@ server <- function(input, output) {
                    }
                  })
     
-    # cantho_ok -> cantho_ok_debug
-    plot_ly(cantho_ok) 
+    
+    plot_ly(cantho_ok,
+            split = ~ten_xa,
+            color = ~TONG_SO_CA,
+            # colors = c("lightyellow", "red"),
+            # colors = rev(viridisLite::inferno(20)),
+            colors = rev(viridisLite::viridis(20)),
+            # text = ~paste0(ten_xa, "\n", TONG_SO_CA, " ca SXH"),
+            text = ~text_chuan,
+            hoveron = "fills",
+            hoverinfo = "text",
+            hoverlabel = list(bgcolor = "white"),
+            stroke = I("black"),
+            span = I(0.5),
+            width = 600,
+            height = 600) %>% 
+      
+      layout(showlegend = FALSE,
+             title = total_case
+      )  %>% colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>')
     
     
   }) |>
