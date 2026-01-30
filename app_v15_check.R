@@ -486,6 +486,7 @@ server <- function(input, output) {
     plot_ly(
       # pre_cantho_ok()[[1]],
       cantho_ok,
+      # cantho_small,
             split = ~ten_xa,
             color = ~TONG_SO_CA,
             # colors = c("lightyellow", "red"),
