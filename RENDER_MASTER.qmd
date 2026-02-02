@@ -37,8 +37,6 @@ knitr::opts_chunk$set(message = FALSE,
 ```
 
 
-
-
 ```{r}
 library(rmarkdown)
 library(quarto)
