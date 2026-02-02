@@ -145,7 +145,7 @@ repeat{
     # 
     # }
     
-  Sys.sleep(10800)
+  Sys.sleep(1800)
   
 }
 ```

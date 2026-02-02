@@ -328,12 +328,81 @@ df_SXH$TUOI <- as.numeric(df_SXH$TUOI)
 # table(df_SXH$TUOI)
 
 summary(df_SXH$TUOI)
+
+df_SXH -> df_SXH_clean
 ```
+
+<!-- # CLEAN CHÍNH TẢ TÊN XÃ -->
+
+```{r}
+library(stringi)
+df_SXH$PHUONG_XA_MOI_base <- stri_trans_general(str = df_SXH$PHUONG_XA_MOI, id = "Latin-ASCII")
+
+# View(df_SXH[ , c("PHUONG_XA_MOI", "PHUONG_XA_MOI_base")])
+
+cantho_v1_chuan <- cantho_v1[ , c("ten_xa"), drop = F]
+
+cantho_v1_chuan <- as.data.frame(cantho_v1_chuan)
+
+cantho_v1_chuan <- cantho_v1_chuan[ , 1]
+
+cantho_v1_chuan <- as.data.frame(cantho_v1_chuan)
+
+names(cantho_v1_chuan) <- "ten_xa"
+
+cantho_v1_chuan$PHUONG_XA_MOI_base<- stri_trans_general(str = cantho_v1_chuan$ten_xa, id = "Latin-ASCII")
+
+df_SXH_merge <- merge(x = df_SXH,
+                      y = cantho_v1_chuan,
+                      all.x = TRUE,
+                      by = "PHUONG_XA_MOI_base")
+
+# View(df_SXH_merge[ , c("PHUONG_XA_MOI", "PHUONG_XA_MOI_base", "ten_xa")])
+
+df_SXH_merge$PHUONG_XA_MOI <- df_SXH_merge$ten_xa
+```
+
+```{r}
+setdiff(df_SXH_merge$PHUONG_XA_MOI , cantho_v1$ten_xa)
+```
+
+
+
+```{r}
+names(df_SXH_clean)
+names(df_SXH_merge)
+
+setdiff(df_SXH_merge$PHUONG_XA_MOI, df_SXH_clean$PHUONG_XA_MOI)
+setdiff(df_SXH_clean$PHUONG_XA_MOI, df_SXH_merge$PHUONG_XA_MOI)
+```
+
+```{r}
+df_SXH_merge_clean <- df_SXH_merge[ , c("TTYTKV",
+                                        "PHUONG_XA_MOI",
+                                        "AP",
+                                        "NGAY_VV",
+                                        "HO",
+                                        "TEN",
+                                        "TUOI",
+                                        "PHAN_DO",
+                                        "GHI_CHU",
+                                        "TOA_DO",
+                                        "NGUOI_NHAP_LIEU",
+                                        "NGAY_NHAP_LIEU")]
+```
+
+```{r}
+df_SXH_merge_clean |> dplyr:::arrange(desc(NGAY_VV),
+                               desc(PHUONG_XA_MOI))  -> df_SXH_clean
+```
+
+
+
 
 <!-- # CLEAN XONG DATA -->
 
 ```{r}
-df_SXH -> df_SXH_clean
+
 
 library(lubridate)
 
@@ -353,6 +422,13 @@ df_SXH_clean$URL_GOC <- SXH_url
 CLEAN_DATA_OUTPUT <- readRDS("CLEAN_DATA_OUTPUT.rds")
 
 saveRDS(df_SXH_clean, paste0(CLEAN_DATA_OUTPUT, "/", SXH_sheet, "_YEAR_", names(ok_year),".rds"))
+```
+
+```{r}
+df_SXH_clean$PHUONG_XA_MOI[df_SXH_clean$PHUONG_XA_MOI == "Mỹ Qưới"]
+
+table(df_SXH_clean$PHUONG_XA_MOI)
+table(df_SXH_clean$TTYTKV)
 ```
 
 
