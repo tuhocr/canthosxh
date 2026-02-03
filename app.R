@@ -87,24 +87,24 @@ date_ori_max  <- range(df$NGAY_VV)[2]
 
 #### GET URL GITHUB ####
 
-ori <- "https://github.com/tuhocr/canthosxh"
-
-ori_1 <- gsub(pattern = "https://github.com/",
-              replacement = "",
-              ori)
-
-strsplit(ori_1, split = "/") -> ori_2
-
-unlist(ori_2) -> ori_3
-
-repo <- paste0(ori_3[1], "/", ori_3[2])
-
-branch <- "main"
-
-folder_ok <- ori_3[length(ori_3)]
-
-
-get_path <- funspotr:::github_contents(repo, branch)
+# ori <- "https://github.com/tuhocr/canthosxh"
+# 
+# ori_1 <- gsub(pattern = "https://github.com/",
+#               replacement = "",
+#               ori)
+# 
+# strsplit(ori_1, split = "/") -> ori_2
+# 
+# unlist(ori_2) -> ori_3
+# 
+# repo <- paste0(ori_3[1], "/", ori_3[2])
+# 
+# branch <- "main"
+# 
+# folder_ok <- ori_3[length(ori_3)]
+# 
+# 
+# get_path <- funspotr:::github_contents(repo, branch)
 
 #### SETUP UI ####
 
@@ -397,6 +397,7 @@ server <- function(input, output) {
                    }
                  })
     
+    start_p1a <- Sys.time()
     
     plot_ly(pre_cantho_ok()[[1]],
             split = ~ten_xa,
@@ -412,11 +413,15 @@ server <- function(input, output) {
             stroke = I("black"),
             span = I(0.5),
             width = 600,
-            height = 600) %>% 
+            height = 600) -> dothi_1_chuan
       
-      layout(showlegend = FALSE,
-             title = pre_cantho_ok()[[2]]
-      )  %>% colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>')
+      
+    start_p1b <- Sys.time()
+    as.numeric(start_p1b - start_p1a) -> thoi_gian_render
+    
+    dothi_1_chuan |> layout(showlegend = FALSE,
+                         title = paste0(pre_cantho_ok()[[2]], " ", thoi_gian_render))  %>%
+      colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>')
     
     
   }) |>
@@ -424,7 +429,7 @@ server <- function(input, output) {
   
   
 
-  output$kq1 = DT:::renderDT(
+  output$kq1 <- DT:::renderDT(
     pre_cantho_ok()[[3]],
     rownames= FALSE,
     extensions = 'Buttons',
@@ -434,6 +439,7 @@ server <- function(input, output) {
       lengthMenu = list(c(10, 30, -1),
                         c('10', '30', 'All')),
       paging = T)
+    
   ) |>
     bindEvent(input$run1)
   
@@ -536,6 +542,7 @@ server <- function(input, output) {
                    }
                  })
     
+   
     plot_ly(cantho_ok[ , ],
             split = ~ten_xa,
             color = ~TONG_SO_CA,
@@ -556,6 +563,7 @@ server <- function(input, output) {
              title = total_case
       )  %>% colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>')
     
+  
   }) |>
     bindEvent(input$run2)
   
