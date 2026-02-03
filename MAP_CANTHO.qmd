@@ -135,19 +135,9 @@ ggsave(filename = "cantho_new.png",
 
 ```{r}
 # https://www.r-bloggers.com/2015/11/solving-the-map-coloring-problem-in-r/
-library(devtools)
-install_github("hunzikp/MapColoring")
-# library(MapColoring)
 library(sf)
 library(sp)
 library(terra)
-# library(cshapes)
-# remotes::install_version("rgeos", version = "0.6-4")
-library(rgeos)
-library(sp)
-# library(RColorBrewer)
-# library(CEoptim)
-
 # gt <- GridTopology(c(0,0), c(1,1), c(8,8))
 # sg <- SpatialGrid(gt)
 # board <- as(as(sg, "SpatialPixels"), "SpatialPolygons")
