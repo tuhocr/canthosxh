@@ -293,8 +293,6 @@ server <- function(input, output) {
   
   pre_cantho_ok <- reactive(x = {
     
-    start_p1a <- Sys.time()
-    
     df_SXH <- df |> subset(NGAY_VV >= input$extract_date_1[1] &
                              NGAY_VV <= input$extract_date_1[2])
     
@@ -367,38 +365,9 @@ server <- function(input, output) {
     
     as.data.frame(cantho_ok) -> cantho_ok_yes
     
-    
-    
-    plot_ly(cantho_ok,
-            split = ~ten_xa,
-            color = ~TONG_SO_CA,
-            # colors = c("lightyellow", "red"),
-            # colors = rev(viridisLite::inferno(20)),
-            colors = rev(viridisLite::viridis(20)),
-            # text = ~paste0(ten_xa, "\n", TONG_SO_CA, " ca SXH"),
-            text = ~text_chuan,
-            hoveron = "fills",
-            hoverinfo = "text",
-            hoverlabel = list(bgcolor = "white"),
-            stroke = I("black"),
-            span = I(0.5),
-            width = 600,
-            height = 600) -> dothi_1_chuan
-    
-    
-    start_p1b <- Sys.time()
-    
-    start_p1b - start_p1a -> thoi_gian_render
-    
-    dothi_1_chuan |> layout(showlegend = FALSE,
-                            title = paste0(total_case, "aaa", 
-                                           thoi_gian_render, 
-                                           attr(unclass(thoi_gian_render), "units")))  %>%
-      colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>') -> dothi_2_chuan
-    
     gomlai <- list()
     
-    gomlai[[1]] <- dothi_2_chuan
+    gomlai[[1]] <- cantho_ok
     
     gomlai[[2]] <- total_case
     
@@ -428,8 +397,34 @@ server <- function(input, output) {
                    }
                  })
     
+    start_p1a <- Sys.time()
     
-    pre_cantho_ok()[[1]]
+    plot_ly(pre_cantho_ok()[[1]],
+            split = ~ten_xa,
+            color = ~TONG_SO_CA,
+            # colors = c("lightyellow", "red"),
+            # colors = rev(viridisLite::inferno(20)),
+            colors = rev(viridisLite::viridis(20)),
+            # text = ~paste0(ten_xa, "\n", TONG_SO_CA, " ca SXH"),
+            text = ~text_chuan,
+            hoveron = "fills",
+            hoverinfo = "text",
+            hoverlabel = list(bgcolor = "white"),
+            stroke = I("black"),
+            span = I(0.5),
+            width = 600,
+            height = 600) -> dothi_1_chuan
+      
+      
+    start_p1b <- Sys.time()
+    start_p1b - start_p1a -> thoi_gian_render
+    
+    dothi_1_chuan |> layout(showlegend = FALSE,
+                         title = paste0(pre_cantho_ok()[[2]], "aaa", 
+                                        thoi_gian_render, 
+                                        attr(unclass(thoi_gian_render), "units")))  %>%
+      colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>')
+    
     
   }) |>
     bindEvent(input$run1)
