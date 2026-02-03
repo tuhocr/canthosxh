@@ -417,10 +417,12 @@ server <- function(input, output) {
       
       
     start_p1b <- Sys.time()
-    as.numeric(start_p1b - start_p1a) -> thoi_gian_render
+    start_p1b - start_p1a -> thoi_gian_render
     
     dothi_1_chuan |> layout(showlegend = FALSE,
-                         title = paste0(pre_cantho_ok()[[2]], " ", thoi_gian_render))  %>%
+                         title = paste0(pre_cantho_ok()[[2]], "aaa", 
+                                        thoi_gian_render, 
+                                        attr(unclass(thoi_gian_render), "units")))  %>%
       colorbar(title = '<span style="color:red;"><b>Số lượng</b></span>')
     
     
