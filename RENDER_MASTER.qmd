@@ -99,8 +99,8 @@ if (!file.exists(CLEAN_DATA_OUTPUT)){
 
 ```{r}
 
-h <- 1
-i <- 1
+# h <- 1
+# i <- 1
 
 repeat{
   
@@ -202,8 +202,8 @@ repeat{
   
   
     
-stopCluster(cl = cluster)
-  # Sys.sleep(10800)
+# stopCluster(cl = cluster)
+  Sys.sleep(3000)
   
 }
 ```
