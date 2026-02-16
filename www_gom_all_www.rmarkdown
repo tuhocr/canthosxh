@@ -1,9 +1,13 @@
 ---
 title: BÁO CÁO CHI TIẾT ODICH_SXH_YEAR_2026
 ---
+
+
 output: html_document
 editor_options: 
   chunk_output_type: console
+
+
 ---
 author: Hoang Quoc Cuong
 date: last-modified
@@ -40,7 +44,6 @@ knitr::opts_chunk$set(message = FALSE,
                       results = 'hide')   
 ```
 
-
 ```{r}
 colorize <- function(string, color) {
   string_colorized <- paste('<b><span style="color: ',
@@ -53,7 +56,11 @@ colorize <- function(string, color) {
 }
 ```
 
+
+
 <!-- **SHAPE FILE CẦN THƠ** -->
+
+
 
 ```{r}
 library(dplyr)
@@ -121,7 +128,6 @@ file_input_ok
 df_SXH <- readRDS(paste0(CLEAN_DATA_OUTPUT, "/", file_input_ok))
 ```
 
-
 ```{r}
 table(df_SXH$YEAR_VV)
 
@@ -129,7 +135,6 @@ which.max(table(df_SXH$YEAR_VV)) -> ok_year
 
 ok_year <- names(ok_year)
 ```
-
 
 ```{r}
 update_time <- Sys.time()
@@ -145,7 +150,6 @@ update_time <- paste0(update_time, " | Dữ liệu ", SXH_sheet, " ", ok_year)
 file_title <- paste0(SXH_sheet, " ", SXH_year )
 ```
 
-
 ```{r}
 grep("ODICH",
      SXH_sheet) -> check_spell
@@ -158,6 +162,8 @@ if(length(check_spell) == 1){
 ```
 
 
+
+
 # [**`r file_title`**]{style="color:red"} {.unnumbered}
 
 Báo cáo được cập nhập vào lúc `r colorize(update_time, "darkgreen")`
@@ -167,6 +173,8 @@ Bản đồ Cần Thơ (thông tin chi tiết phường, xã mới) [**click her
 <!-- <https://docs.google.com/spreadsheets/d/1rygVo-gcd15AC-khYsNa55VpqjHSBik5HoS8dnTFIkg/edit?gid=1204706650#gid=1204706650> -->
 
 <mark style="background-color: #FFFF00">**Để copy file ảnh đồ thị full-size, ta right-click lên hình, chọn `Open image in new tab`**</mark>
+
+
 
 ```{r}
 year_range_begin <- paste0(ok_year, "-01-01")
@@ -186,7 +194,11 @@ library(DT)
 # https://quarto.org/docs/dashboards/data-display.html
 ```
 
+
+
 # **KIỂM TRA DỮ LIỆU**
+
+
 
 ```{r}
 library(readxl)
@@ -197,9 +209,13 @@ DANH_SACH_TTYTKV <- as.data.frame(DANH_SACH_TTYTKV)
 ```
 
 
+
+
 **Nhập dữ liệu sai lệch năm (vd: file 2025 nhưng lại có bệnh nhân của năm 2026)**
 
 ::: {.callout-note collapse="true" title="`Dữ liệu nhập lệch năm`"}
+
+
 ```{r, results="hold"}
 cat("Dữ liệu ban đầu:", nrow(df_SXH_ORI_BANDAU),"\n")
 
@@ -215,40 +231,60 @@ if(nrow(df_SXH_ORI_BANDAU) != nrow(df_SXH)){
 }
 
 ```
+
+
 :::
 
 
 **Nếu tổng số `TTYTKV` không vượt quá 22 (năm 2025) hay 20 (năm 2026) thì dữ liệu chính xác.**
+
+
 
 ```{r}
 paste0("Tổng số TTYTKV là ", 
        length(table(df_SXH$TTYTKV))) -> check_ttytkv
 ```
 
+
+
 `r colorize(check_ttytkv, "red")`
 
 ::: {.callout-note collapse="true" title="`TTYTKV`"}
+
+
 ```{r, results="hold"}
 table(df_SXH$TTYTKV)
 cat("Tổng số TTYTKV là", length(table(df_SXH$TTYTKV)))
 ```
+
+
 :::
 
 **Nếu tổng số `PHUONG_XA_MOI` không vượt quá 103 thì dữ liệu chính xác.**
+
+
 
 ```{r}
 paste0("Tổng số PHUONG_XA_MOI là ", 
        length(table(df_SXH$PHUONG_XA_MOI))) -> check_PHUONG_XA_MOI
 ```
 
+
+
 `r colorize(check_PHUONG_XA_MOI, "red")`
 
 ::: {.callout-note collapse="true" title="`PHUONG_XA_MOI`"}
+
+
 ```{r, results="hold"}
 table(df_SXH$PHUONG_XA_MOI)
 cat("Tổng số PHUONG_XA_MOI là", length(table(df_SXH$PHUONG_XA_MOI)))
 ```
+
+
 :::
+
+
 
 ```{r}
 table(df_SXH$TTYTKV,
@@ -278,9 +314,13 @@ stat_day_df <- stat_day_df |> subset(COUNT != 0)
 stat_day_df -> stat_day_df_DAY_ORI
 ```
 
+
+
 **Nếu kết quả tổng số ca theo `TTYTKV` và `PHUONG_XA_MOI` không vượt quá 103 thì dữ liệu chính xác.**
 
 Số liệu này thể hiện bao nhiều phường xã có ca bệnh tương ứng với trung tâm y tế khu vực, tổng số không vượt qua 103 phường xã. Cần kiểm tra xem 1 phường xã có bị trùng ở các trung tâm y tế khu vực khác nhau không.
+
+
 
 ```{r}
 library(dplyr)
@@ -303,15 +343,23 @@ table(total_case_day_YEAR_ORI$PHUONG_XA_MOI)[table(total_case_day_YEAR_ORI$PHUON
 # check_dup
 ```
 
+
+
 ::: {.callout-note collapse="true" title="Dữ liệu bị trùng"}
+
+
 ```{r, results="hold"}
 sort(table(total_case_day_YEAR_ORI$PHUONG_XA_MOI), decreasing = T)
 cat("Tổng số PHUONG_XA_MOI là", nrow(total_case_day_YEAR_ORI),"\n")
 total_case_day_YEAR_ORI[total_case_day_YEAR_ORI$PHUONG_XA_MOI %in% names(check_dup), ] |> dplyr:::arrange(PHUONG_XA_MOI)
 ```
+
+
 :::
 
 #  **SỐ** **`r case_name_title`**     **THEO NGÀY [DỮ LIỆU GỐC]**
+
+
 
 ```{r}
 df_SXH[  , c("TTYTKV", "PHUONG_XA_MOI", "NGAY_VV", "TUOI", "PHAN_DO", "GHI_CHU", "NGUOI_NHAP_LIEU")] -> df_SXH_all_raw
@@ -341,7 +389,11 @@ DT:::datatable(
 )
 ```
 
+
+
 #  **TỔNG SỐ** **`r case_name_title`**     **TRONG NĂM THEO KHU VỰC**
+
+
 
 ```{r}
 table(df_SXH$TTYTKV,
@@ -365,13 +417,11 @@ stat_day_df |> dplyr:::arrange(desc(TTYTKV),
                                desc(NGAY_VV))  -> stat_day_df_final
 ```
 
-
 ```{r}
 stat_day_df <- stat_day_df |> subset(COUNT != 0)
 
 stat_day_df -> stat_day_df_DAY_ORI
 ```
-
 
 ```{r}
 library(dplyr)
@@ -393,7 +443,11 @@ time_1 <- paste0("Từ ngày ",
     as.character(range(stat_day_df$NGAY_VV)[2]))
 ```
 
+
+
 `r colorize(time_1, "blue")`
+
+
 
 ```{r}
 time_2 <- paste0("Tổng số ca: ",
@@ -403,13 +457,16 @@ time_2 <- paste0("Tổng số ca: ",
     " | Tổng số phường, xã: 103")
 ```
 
-
 ```{r}
 time_sxh <- paste0("Tổng số phường, xã có ca SXH: ",
     length(unique(total_case_day$PHUONG_XA_MOI)))
 ```
 
+
+
 `r colorize(time_2, "red")`
+
+
 
 ```{r}
 if(length(setdiff(cantho_v1$ten_xa, df_SXH$PHUONG_XA_MOI)) > 0){
@@ -428,9 +485,13 @@ time_3 <- paste0("Tổng số phường, xã có KHÔNG có SXH: ",
 
 ```
 
+
+
 `r  if(exists("time_sxh")){colorize(time_sxh, "red")}`
 
 `r  if(exists("time_3")){colorize(time_3, "darkgreen")}`
+
+
 
 
 ```{r}
@@ -446,7 +507,6 @@ names(total_case_day_OUTPUT) <- c("TTYTKV",
 
 # write.csv(total_case_day_OUTPUT, "total_case_day_OUTPUT_SXH.csv", row.names = F)
 ```
-
 
 ```{r, results='hold'}
 library(DT)
@@ -466,7 +526,11 @@ DT:::datatable(
 ```
 
 
+
+
 #  **ĐỒ THỊ TỔNG SỐ** **`r case_name_title`**     **THEO KHU VỰC**
+
+
 
 ```{r, fig.width=6, fig.height=10}
 # total_case_day_YEAR_ORI
@@ -518,8 +582,6 @@ total_case_day_YEAR_CHUAN |> dplyr:::arrange(TTYTKV, TONG_SO_CA, PHUONG_XA_MOI) 
 #     legend.justification = c(1, 0.5)
 #   )
 ```
-
-
 
 ```{r, fig.width=8, fig.height=26}
 aggregate(TONG_SO_CA ~ TTYTKV,
@@ -676,9 +738,13 @@ if(xaxt_ok == "n"){
 dev.off()
 ```
 
+
+
 <!-- ![](`r paste0(getwd(), "/PLOT/", name_file_output, "___DO_THI_TONG_SO_CA_TRONG_KHU_VUC.PNG")`) -->
 
 ![](`r paste0("PLOT/", name_file_output, "___DO_THI_TONG_SO_CA_TRONG_KHU_VUC.PNG")`)
+
+
 
 ```{r}
 
@@ -686,9 +752,13 @@ dev.off()
 
 
 
+
+
 <!-- `https://r-graphics.org/RECIPE-BAR-GRAPH-DOT-PLOT.html` -->
 
 #  **TỔNG SỐ** **`r case_name_title`**     **THEO THÁNG**
+
+
 
 ```{r}
 library(lubridate)
@@ -723,11 +793,9 @@ stat_day_df_month_ori |> dplyr:::arrange(desc(TTYTKV),
                                MONTH)  -> stat_day_df_final_month_ori
 ```
 
-
 ```{r}
 stat_day_df_month_ori <- stat_day_df_month_ori |> subset(COUNT != 0)
 ```
-
 
 ```{r}
 
@@ -746,7 +814,6 @@ stat_day_df_month_ori -> stat_day_df_MONTH
 
 names(stat_day_df_MONTH) <- c("TTYTKV", "Phường, xã mới", "Tháng", "Tổng số ca")
 ```
-
 
 ```{r, results='hold'}
 
@@ -767,7 +834,11 @@ DT:::datatable(
 ```
 
 
+
+
 #  **ĐỒ THỊ TỔNG SỐ** **`r case_name_title`**     **THEO THỜI GIAN**
+
+
 
 ```{r}
 stat_day_df_MONTH_ORI_CHUAN |> dplyr:::group_by(TTYTKV, MONTH) |> 
@@ -885,7 +956,6 @@ ggplot(data = stat_day_df_MONTH_ORI_YES,
   ylab(paste0("Số ", case_name_plot)) 
 ```
 
-
 ```{r}
 stat_day_df_MONTH_ORI_YES <- stat_day_df_MONTH_ORI_YES_chuan
 library(dplyr)
@@ -992,7 +1062,11 @@ ggplot(data = stat_day_df_MONTH_ORI_CUMSUM,
 ```
 
 
+
+
 #  **TỔNG SỐ** **`r case_name_title`**     **THEO TUẦN**
+
+
 
 ```{r}
 library(lubridate)
@@ -1025,7 +1099,6 @@ stat_day_df |> dplyr:::arrange(desc(TTYTKV),
                                WEEK)  -> stat_day_df_final
 ```
 
-
 ```{r}
 stat_day_WEEK <- stat_day_df |> subset(COUNT != 0)
 
@@ -1052,7 +1125,11 @@ DT:::datatable(
 
 
 
+
+
 # **ĐỒ THỊ THEO NGÀY**
+
+
 
 ```{r}
 library(ggplot2)
@@ -1352,7 +1429,11 @@ list_ttyt_p[[p]] <- p1
 ```
 
 
+
+
 <!-- **đếm số panel trong mỗi plot** -->
+
+
 
 ```{r}
 num_panel_check <- vector()
@@ -1367,8 +1448,6 @@ num_panel_check <- append(num_panel_check, num_panel)
 
 }
 ```
-
-
 
 ``` {r, echo=FALSE, results='asis'}
 for(r in 1:length(num_panel_check)){
@@ -1417,7 +1496,11 @@ cat(unlist(ok),sep="\n")
 }
 ```
 
+
+
 # **ĐỒ THỊ THEO TUẦN**
+
+
 
 ```{r}
 library(ggplot2)
@@ -1727,7 +1810,11 @@ list_ttyt_p[[p]] <- p1
 ```
 
 
+
+
 <!-- **đếm số panel trong mỗi plot** -->
+
+
 
 ```{r}
 num_panel_check <- vector()
@@ -1742,8 +1829,6 @@ num_panel_check <- append(num_panel_check, num_panel)
 
 }
 ```
-
-
 
 ``` {r, echo=FALSE, results='asis'}
 for(r in 1:length(num_panel_check)){
@@ -1793,7 +1878,11 @@ cat(unlist(ok),sep="\n")
 ```
 
 
+
+
 # **ĐỒ THỊ THEO THÁNG**
+
+
 
 
 ```{r}
@@ -2134,7 +2223,11 @@ list_ttyt_p[[p]] <- p1
 ```
 
 
+
+
 <!-- **đếm số panel trong mỗi plot** -->
+
+
 
 ```{r}
 num_panel_check <- vector()
@@ -2149,8 +2242,6 @@ num_panel_check <- append(num_panel_check, num_panel)
 
 }
 ```
-
-
 
 ``` {r, echo=FALSE, results='asis'}
 for(r in 1:length(num_panel_check)){
@@ -2199,16 +2290,7 @@ cat(unlist(ok),sep="\n")
 }
 ```
 
-
-
-
 ```{=html}
 <b><span style="color:green;  text-align: center;">Technical support: Duc Nguyen | <a href="https://www.tuhocr.com/">tuhocr.com</a></span></b>
 ```
-
-
-
-
-
-
 
