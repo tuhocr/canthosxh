@@ -17,3 +17,8 @@ _bookdown_files/
 combine.sh
 *.yml
 .yml
+.R
+*.R
+*.rmarkdown
+.rmarkdown
+/www_gom_all_www_files/
