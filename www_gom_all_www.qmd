@@ -1,5 +1,5 @@
 ---
-title: BÁO CÁO CHI TIẾT ODICH_SXH_YEAR_2026
+title: BÁO CÁO CHI TIẾT ODICH_TCM_YEAR_2026
 author: Hoang Quoc Cuong
 date: last-modified
 format:
