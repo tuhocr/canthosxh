@@ -1,1 +1,0 @@
-cat REPORT_ALL_TITLE.qmd REPORT_ALL_CONTENT.qmd > www_gom_all_www.qmd
