@@ -7,5 +7,9 @@ bookdown-bysh.log
 bookdown-bysh.pdf
 bookdown-bysh.tex
 _bookdown_files/
-
+/CLEAN_DATA_OUTPUT/
 /.quarto/
+*.rds
+.rds
+*.qmd
+.qmd
