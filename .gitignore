@@ -8,8 +8,12 @@ bookdown-bysh.pdf
 bookdown-bysh.tex
 _bookdown_files/
 /CLEAN_DATA_OUTPUT/
+/ALL_RAW/
 /.quarto/
 *.rds
 .rds
 *.qmd
 .qmd
+combine.sh
+*.yml
+.yml
