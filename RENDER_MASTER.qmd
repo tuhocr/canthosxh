@@ -199,7 +199,10 @@ repeat{
   }
   
   
-  
+   try(quarto:::quarto_render("ALL_RAW.qmd",
+                       output_format = "html"
+                                 )
+          )
   
     
 # stopCluster(cl = cluster)
