@@ -1,0 +1,17 @@
+---
+title: "test"
+format: html
+---
+
+ok
+
+```{r}
+name_file_output <- "SXH_YEAR_2026"
+```
+
+
+![](`r paste0(getwd(), "/PLOT/", name_file_output, "___DO_THI_TONG_SO_CA_TRONG_KHU_VUC.PNG")`)
+
+![](PLOT/SXH_YEAR_2026___DO_THI_TONG_SO_CA_TRONG_KHU_VUC.PNG)
+
+![](`r paste0("PLOT/", name_file_output, "___DO_THI_TONG_SO_CA_TRONG_KHU_VUC.PNG")`)

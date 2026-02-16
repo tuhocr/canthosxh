@@ -676,7 +676,9 @@ if(xaxt_ok == "n"){
 dev.off()
 ```
 
-![](`r paste0(getwd(), "/PLOT/", name_file_output, "___DO_THI_TONG_SO_CA_TRONG_KHU_VUC.PNG")`)
+<!-- ![](`r paste0(getwd(), "/PLOT/", name_file_output, "___DO_THI_TONG_SO_CA_TRONG_KHU_VUC.PNG")`) -->
+
+![](`r paste0("PLOT/", name_file_output, "___DO_THI_TONG_SO_CA_TRONG_KHU_VUC.PNG")`)
 
 ```{r}
 
