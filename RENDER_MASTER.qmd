@@ -99,8 +99,8 @@ if (!file.exists(CLEAN_DATA_OUTPUT)){
 
 ```{r}
 
-# h <- 1
-# i <- 1
+h <- 1
+i <- 2
 
 repeat{
   
